@@ -140,141 +140,352 @@
       font-weight: 600; cursor: pointer;
     }
 
+    /* ═══════════════════════════════════════════
+       OPTION A REWORK — CARD + MODAL
+       ═══════════════════════════════════════════ */
+
     /* ── GRID ── */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 18px; padding: 24px 32px;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 20px; padding: 28px 32px;
     }
 
+    /* ─────────────────────────────────────────
+       CARD REDESIGN
+       Problem solved: old card buried the name
+       under too-subtle overlay, rate badge felt
+       disconnected, hover gave no preview intent.
+       Fix: stronger gradient, name as primary
+       element, rate integrated into footer,
+       hover reveals a "Quick preview" CTA strip.
+    ───────────────────────────────────────────── */
     .card {
-      background: var(--white); border-radius: 14px; overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      cursor: pointer; transition: transform 0.18s, box-shadow 0.18s;
-      position: relative;
+      border-radius: 16px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+      cursor: pointer; position: relative;
+      /* aspect-ratio drives consistent height without JS */
+      aspect-ratio: 3/4;
+      background: #d1d5db;
+      transition: box-shadow 0.2s, transform 0.2s;
     }
-    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.13); }
+    .card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.18); transform: translateY(-4px); }
 
+    /* Full-bleed photo */
     .card-img {
-      width: 100%; aspect-ratio: 3/4; object-fit: cover;
-      display: block; background: #d1d5db;
-    }
-    .card-img.placeholder {
-      display: flex; align-items: center; justify-content: center;
-      font-size: 3rem; color: #9ca3af; width: 100%;
+      width: 100%; height: 100%; object-fit: cover;
+      display: block; position: absolute; inset: 0;
     }
 
+    /* Two-stop gradient: transparent top → rich black bottom
+       Why: preserves photo at top while guaranteeing text legibility */
+    .card-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(5,10,30,0.90) 0%,
+        rgba(5,10,30,0.45) 45%,
+        transparent 72%
+      );
+    }
+
+    /* Rate badge — top-left, smaller pill
+       Why moved from top-right: eye enters top-left (LTR),
+       so rate is seen early without competing with photo face */
+    .card-rate {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(10,20,60,0.75);
+      backdrop-filter: blur(6px);
+      color: var(--white); border-radius: 20px;
+      padding: 4px 11px; font-size: 0.72rem; font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    /* AI score chip — top-right, accent colour
+       Why: signals quality signal at a glance before user reads name */
+    .card-ai {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(250,180,0,0.88);
+      backdrop-filter: blur(6px);
+      color: #1a1100; border-radius: 20px;
+      padding: 4px 9px; font-size: 0.68rem; font-weight: 800;
+      display: flex; align-items: center; gap: 3px;
+    }
+
+    /* Footer: name is the anchor, role below, tags last
+       Why: hierarchy mirrors how hirers scan — person → role → skills */
     .card-footer {
       position: absolute; bottom: 0; left: 0; right: 0;
-      background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.3) 70%, transparent 100%);
-      padding: 32px 12px 12px;
+      padding: 0 14px 14px;
+      z-index: 1;
     }
-    .card-flag { font-size: 0.75rem; color: rgba(255,255,255,0.85); margin-bottom: 3px; }
-    .card-title { font-size: 0.85rem; font-weight: 700; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card-name  { font-size: 0.78rem; color: rgba(255,255,255,0.88); margin-bottom: 6px; }
-    .card-tags  { display: flex; gap: 5px; flex-wrap: wrap; }
+    .card-name {
+      font-size: 1rem; font-weight: 800; color: var(--white);
+      line-height: 1.2; margin-bottom: 2px;
+    }
+    .card-title {
+      font-size: 0.73rem; color: rgba(255,255,255,0.78);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 8px;
+    }
+    .card-flag {
+      font-size: 0.7rem; color: rgba(255,255,255,0.6);
+      margin-bottom: 6px; display: flex; align-items: center; gap: 4px;
+    }
+    .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
     .card-tag {
-      background: rgba(255,255,255,0.18); color: var(--white);
-      border-radius: 10px; padding: 2px 8px; font-size: 0.68rem;
-    }
-    .card-rate {
-      position: absolute; top: 12px; right: 12px;
-      background: var(--navy); color: var(--white);
-      border-radius: 14px; padding: 3px 9px; font-size: 0.75rem; font-weight: 700;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: var(--white); border-radius: 20px;
+      padding: 2px 9px; font-size: 0.65rem; font-weight: 500;
+      backdrop-filter: blur(4px);
     }
 
-    /* ── MODAL ── */
+    /* Hover CTA strip — slides up from bottom
+       Why: makes the card's affordance explicit ("click = preview"),
+       connecting card to modal with a verbal bridge */
+    .card-cta {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: var(--accent);
+      color: var(--white); font-size: 0.78rem; font-weight: 700;
+      text-align: center; padding: 10px;
+      transform: translateY(100%);
+      transition: transform 0.2s ease;
+      z-index: 2; letter-spacing: 0.3px;
+    }
+    .card:hover .card-cta { transform: translateY(0); }
+
+
+    /* ─────────────────────────────────────────
+       MODAL REDESIGN
+       Problem solved: old modal used a static
+       photo left — same image as card, no new
+       information. Split feel was arbitrary.
+       Fix: left panel = video resume player
+       (primary differentiator of RemoteRecruit),
+       right panel = structured info with clear
+       hierarchy. Two surfaces now connect:
+       card → face recognition → modal → video.
+    ───────────────────────────────────────────── */
     .overlay {
       display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.55); z-index: 200;
-      align-items: center; justify-content: center;
+      background: rgba(5,10,30,0.65);
+      backdrop-filter: blur(4px);
+      z-index: 200; align-items: center; justify-content: center;
+      padding: 16px;
     }
     .overlay.open { display: flex; }
 
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(24px) scale(0.98); }
+      to   { opacity:1; transform:none; }
+    }
+
     .modal {
-      background: var(--white); border-radius: 18px;
-      width: min(860px, 95vw); max-height: 90vh; overflow: hidden;
-      display: flex; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      animation: fadeUp 0.22s ease;
-    }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
-
-    .modal-photo {
-      width: 42%; min-height: 420px; background: #c4b5a0;
-      object-fit: cover; flex-shrink: 0;
-    }
-    .modal-photo.placeholder-photo {
-      display: flex; align-items: center; justify-content: center; font-size: 6rem; color: #9ca3af;
+      background: var(--white); border-radius: 20px;
+      width: min(900px, 100%); max-height: 88vh;
+      display: flex; overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+      animation: fadeUp 0.24s cubic-bezier(.22,.68,0,1.2);
     }
 
-    .modal-body { flex: 1; padding: 32px 28px; overflow-y: auto; position: relative; }
+    /* LEFT — Video resume panel
+       Dark background matches "cinema" feel of video.
+       Play button communicates this is a video, not just a photo.
+       Connecting element: avatar in right panel uses same photo
+       so the face seen in video is confirmed by the avatar. */
+    .modal-video-panel {
+      width: 42%; flex-shrink: 0; position: relative;
+      background: #0a0f1e; display: flex;
+      align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .modal-video-img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block; opacity: 0.82;
+    }
+    /* Subtle vignette to reinforce "video player" feel */
+    .modal-video-panel::after {
+      content:''; position:absolute; inset:0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.55) 100%);
+      pointer-events: none;
+    }
+    /* Play button overlay */
+    .modal-play {
+      position: absolute; z-index: 2;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      border: 2.5px solid rgba(255,255,255,0.70);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.2s, transform 0.2s;
+    }
+    .modal-play:hover { background: rgba(255,255,255,0.30); transform: scale(1.08); }
+    .modal-play svg { width: 22px; height: 22px; fill: white; margin-left: 3px; }
+    /* "Video resume" label bottom-left */
+    .modal-video-label {
+      position: absolute; bottom: 14px; left: 14px; z-index: 2;
+      color: rgba(255,255,255,0.7); font-size: 0.72rem; font-weight: 600;
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(0,0,0,0.35); border-radius: 10px;
+      padding: 4px 10px; backdrop-filter: blur(4px);
+    }
+    .modal-video-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #f87171;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* RIGHT — Candidate detail panel */
+    .modal-body {
+      flex: 1; padding: 28px 26px 24px;
+      overflow-y: auto; position: relative;
+      display: flex; flex-direction: column; gap: 0;
+    }
 
     .modal-close {
-      position: absolute; top: 16px; right: 16px;
-      background: var(--border); border: none; border-radius: 50%;
-      width: 32px; height: 32px; font-size: 1.1rem; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; line-height: 1;
+      position: absolute; top: 14px; right: 14px;
+      background: #f3f4f6; border: none; border-radius: 50%;
+      width: 30px; height: 30px; font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); transition: background 0.15s, color 0.15s;
     }
-    .modal-close:hover { background: #d1d5db; }
+    .modal-close:hover { background: #e5e7eb; color: var(--text); }
 
-    .modal-job { font-size: 1.35rem; font-weight: 800; color: var(--text); margin-bottom: 14px; }
-
-    .modal-profile { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    /* Name + avatar row — mirrors card (face continuity)
+       Why: user saw the face on card, opening modal should
+       immediately confirm "yes, same person". */
+    .modal-identity {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 4px; padding-right: 36px;
+    }
     .modal-avatar {
-      width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
-      background: #d1d5db; flex-shrink: 0;
+      width: 46px; height: 46px; border-radius: 50%; object-fit: cover;
+      border: 2.5px solid var(--accent); flex-shrink: 0;
     }
-    .modal-avatar.placeholder-avatar {
-      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    .modal-info-name {
+      font-size: 1.1rem; font-weight: 800; color: var(--text); line-height: 1.2;
     }
-    .modal-info-name { font-weight: 700; color: var(--text); }
-    .modal-info-loc  { font-size: 0.82rem; color: var(--muted); margin-top: 1px; }
-
-    .ai-badge {
-      margin-left: auto; background: var(--yellow); color: var(--white);
-      border-radius: 10px; padding: 3px 10px; font-size: 0.75rem; font-weight: 700;
+    .modal-info-loc {
+      font-size: 0.78rem; color: var(--muted); margin-top: 2px;
+      display: flex; align-items: center; gap: 4px;
     }
 
-    .modal-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    /* Role title — clearly below name in hierarchy */
+    .modal-job {
+      font-size: 0.88rem; font-weight: 600; color: var(--accent);
+      margin-bottom: 12px; padding-left: 58px; /* indent to align under name */
+      line-height: 1.3;
+    }
+
+    /* AI Score — inline bar to show numeric quality
+       Why: badge alone was cryptic; bar makes "high/low" scannable */
+    .modal-ai-row {
+      display: flex; align-items: center; gap: 10px;
+      background: #fffbeb; border: 1px solid #fde68a;
+      border-radius: 10px; padding: 8px 12px;
+      margin-bottom: 14px;
+    }
+    .modal-ai-label { font-size: 0.75rem; font-weight: 700; color: #92400e; white-space: nowrap; }
+    .modal-ai-bar-track {
+      flex: 1; height: 6px; background: #fde68a; border-radius: 3px; overflow: hidden;
+    }
+    .modal-ai-bar-fill {
+      height: 100%; background: #f59e0b; border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+    .modal-ai-score { font-size: 0.78rem; font-weight: 800; color: #92400e; }
+
+    /* Skill tags */
+    .modal-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
     .modal-tag {
       background: var(--tag-bg); color: var(--tag-color);
-      border-radius: 14px; padding: 4px 12px; font-size: 0.8rem; font-weight: 500;
+      border: 1px solid #c7d7ff;
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 0.75rem; font-weight: 600;
     }
 
-    .rates { display: flex; gap: 0; margin-bottom: 20px; }
+    /* Rates — side-by-side, left-aligned not centred
+       Why: centred numbers feel like "hero stat" marketing;
+       left-aligned with label above feels like a clear data field */
+    .rates {
+      display: flex; gap: 12px; margin-bottom: 16px;
+    }
     .rate-box {
-      flex: 1; text-align: center; padding: 12px 0;
+      flex: 1; background: #f9fafb;
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 10px 14px;
+    }
+    .rate-label { font-size: 0.7rem; color: var(--muted); font-weight: 500; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .rate-val { font-size: 1.25rem; font-weight: 800; color: var(--green); }
+    .rate-val.dash { color: var(--muted); font-size: 1rem; }
+
+    /* Bio */
+    .modal-section-label {
+      font-size: 0.7rem; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+    .bio-text {
+      font-size: 0.85rem; color: #374151; line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    /* CTAs — primary fills full width (Message), secondary outline below
+       Why: old layout gave both equal weight. Message is the conversion
+       goal; View Profile is secondary research. Size reflects priority. */
+    .modal-actions { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+    .btn-msg {
+      width: 100%; background: var(--accent); color: var(--white);
+      border: none; border-radius: 12px;
+      padding: 13px; font-size: 0.93rem; font-weight: 700;
+      cursor: pointer; transition: background 0.18s;
+      letter-spacing: 0.2px;
+    }
+    .btn-msg:hover { background: var(--accent-hover); }
+    .btn-view {
+      width: 100%; background: var(--white); color: var(--text);
+      border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 11px; font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; transition: border-color 0.18s, color 0.18s;
+    }
+    .btn-view:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── ANNOTATIONS PANEL (toggleable) ── */
+    .annot-toggle {
+      position: fixed; bottom: 24px; right: 24px; z-index: 300;
+      background: var(--navy); color: var(--white);
+      border: none; border-radius: 30px; padding: 10px 18px;
+      font-size: 0.8rem; font-weight: 700; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .annot-panel {
+      position: fixed; bottom: 72px; right: 24px; z-index: 300;
+      width: 320px; background: var(--white);
+      border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      padding: 20px; display: none; max-height: 60vh; overflow-y: auto;
       border: 1px solid var(--border);
     }
-    .rate-box:first-child { border-radius: 10px 0 0 10px; }
-    .rate-box:last-child  { border-radius: 0 10px 10px 0; border-left: none; }
-    .rate-val  { font-size: 1.4rem; font-weight: 800; color: var(--green); }
-    .rate-val.dash { color: var(--muted); }
-    .rate-label{ font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
-
-    .bio-label { font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; }
-    .bio-text  { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
-
-    .modal-actions { display: flex; gap: 12px; margin-top: 28px; }
-    .btn-msg {
-      flex: 1; background: var(--accent); color: var(--white); border: 2px solid var(--accent);
-      border-radius: 30px; padding: 13px; font-size: 0.95rem; font-weight: 700;
-      cursor: pointer; transition: background 0.2s;
+    .annot-panel.open { display: block; }
+    .annot-panel h3 { font-size: 0.85rem; font-weight: 800; color: var(--text); margin-bottom: 14px; }
+    .annot-item { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+    .annot-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .annot-tag {
+      display: inline-block; background: var(--tag-bg); color: var(--tag-color);
+      border-radius: 6px; padding: 2px 8px; font-size: 0.68rem; font-weight: 700;
+      margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px;
     }
-    .btn-msg:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
-    .btn-view {
-      flex: 1; background: var(--white); color: var(--accent); border: 2px solid var(--accent);
-      border-radius: 30px; padding: 13px; font-size: 0.95rem; font-weight: 700;
-      cursor: pointer; transition: background 0.2s, color 0.2s;
-    }
-    .btn-view:hover { background: var(--accent); color: var(--white); }
+    .annot-change { font-size: 0.8rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .annot-why { font-size: 0.75rem; color: var(--muted); line-height: 1.55; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 640px) {
-      .search-bar { width: 200px; }
       .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; }
-      .modal { flex-direction: column; }
-      .modal-photo { width: 100%; min-height: 240px; }
+      .modal { flex-direction: column; max-height: 95vh; }
+      .modal-video-panel { width: 100%; min-height: 220px; }
+      .annot-toggle { bottom: 16px; right: 16px; }
+      .annot-panel { right: 16px; width: calc(100vw - 32px); }
     }
   </style>
 </head>
@@ -326,41 +537,129 @@
 <!-- MODAL OVERLAY -->
 <div class="overlay" id="overlay" onclick="closeModal(event)">
   <div class="modal" id="modal">
-    <div class="modal-photo placeholder-photo" id="modalPhoto">👤</div>
+
+    <!-- LEFT: Video Resume Panel -->
+    <div class="modal-video-panel" id="modalVideoPanel">
+      <img class="modal-video-img" id="modalVideoImg" src="" alt="" />
+      <div class="modal-play" title="Play video resume">
+        <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+      </div>
+      <div class="modal-video-label">
+        <span class="modal-video-dot"></span> Video Resume
+      </div>
+    </div>
+
+    <!-- RIGHT: Candidate Details -->
     <div class="modal-body">
       <button class="modal-close" onclick="closeModalBtn()">✕</button>
-      <div class="modal-job" id="modalJob"></div>
 
-      <div class="modal-profile">
-        <div class="modal-avatar placeholder-avatar" id="modalAvatar">👤</div>
+      <!-- Identity: avatar + name + location -->
+      <div class="modal-identity">
+        <img class="modal-avatar" id="modalAvatar" src="" alt="" />
         <div>
           <div class="modal-info-name" id="modalName"></div>
           <div class="modal-info-loc" id="modalLoc"></div>
         </div>
-        <div class="ai-badge">AI Score: ⚡</div>
       </div>
 
+      <!-- Role — secondary to name -->
+      <div class="modal-job" id="modalJob"></div>
+
+      <!-- AI Score with visual bar -->
+      <div class="modal-ai-row">
+        <span class="modal-ai-label">⚡ AI Score</span>
+        <div class="modal-ai-bar-track">
+          <div class="modal-ai-bar-fill" id="modalAiBar" style="width:72%"></div>
+        </div>
+        <span class="modal-ai-score" id="modalAiScore">72</span>
+      </div>
+
+      <!-- Skills -->
       <div class="modal-tags" id="modalTags"></div>
 
+      <!-- Rates -->
       <div class="rates">
         <div class="rate-box">
-          <div class="rate-val" id="modalRate"></div>
           <div class="rate-label">Hourly rate</div>
+          <div class="rate-val" id="modalRate"></div>
         </div>
         <div class="rate-box">
-          <div class="rate-val dash" id="modalAnnual">--</div>
           <div class="rate-label">Annual rate</div>
+          <div class="rate-val dash" id="modalAnnual">--</div>
         </div>
       </div>
 
-      <div class="bio-label">My bio</div>
+      <!-- Bio -->
+      <div class="modal-section-label">About</div>
       <div class="bio-text" id="modalBio"></div>
 
+      <!-- CTAs — stacked, priority order -->
       <div class="modal-actions">
-        <button class="btn-msg">Message</button>
-        <button class="btn-view">View profile</button>
+        <button class="btn-msg">✉ Message</button>
+        <button class="btn-view">View full profile →</button>
       </div>
     </div>
+
+  </div>
+</div>
+
+<!-- DESIGN ANNOTATIONS -->
+<button class="annot-toggle" onclick="toggleAnnotations()">📋 Design Notes</button>
+<div class="annot-panel" id="annotPanel">
+  <h3>Option A — Design Decisions</h3>
+
+  <div class="annot-item">
+    <div class="annot-tag">Card</div>
+    <div class="annot-change">Rate badge moved top-left</div>
+    <div class="annot-why">Eye enters top-left in LTR scanning. Rate seen early without competing with the face, which should stay dominant.</div>
+  </div>
+
+  <div class="annot-item">
+    <div class="annot-tag">Card</div>
+    <div class="annot-change">Name is the anchor, role secondary</div>
+    <div class="annot-why">Hirers identify candidates by name first, then confirm role fit. Previous layout made role and name equal weight.</div>
+  </div>
+
+  <div class="annot-item">
+    <div class="annot-tag">Card</div>
+    <div class="annot-change">Hover reveals "Quick Preview" strip</div>
+    <div class="annot-why">Makes the card's click affordance explicit. Words "Quick Preview" bridge card → modal, reducing surprise.</div>
+  </div>
+
+  <div class="annot-item">
+    <div class="annot-tag">Card</div>
+    <div class="annot-change">AI score chip top-right</div>
+    <div class="annot-why">Quality signal should be visible at a glance in the grid, before the user decides to click. Amber colour flags it as a score, not a category.</div>
+  </div>
+
+  <div class="annot-item">
+    <div class="annot-tag">Modal</div>
+    <div class="annot-change">Left panel: video resume, not static photo</div>
+    <div class="annot-why">RemoteRecruit's core differentiator is video resumes. Showing the same photo twice (card + modal left) added no new information. The video panel gives the modal a distinct job.</div>
+  </div>
+
+  <div class="annot-item">
+    <div class="annot-tag">Modal</div>
+    <div class="annot-change">Avatar in detail panel reuses same face</div>
+    <div class="annot-why">Continuity: user recognised the face on the card. Small avatar beside the name in the modal confirms "same person", removing any disorientation.</div>
+  </div>
+
+  <div class="annot-item">
+    <div class="annot-tag">Modal</div>
+    <div class="annot-change">AI Score as bar, not just a badge</div>
+    <div class="annot-why">A yellow badge with "AI Score: ⚡" told users nothing about whether 72 is good or bad. A filled bar gives instant proportional context.</div>
+  </div>
+
+  <div class="annot-item">
+    <div class="annot-tag">Modal</div>
+    <div class="annot-change">CTAs stacked, Message full-width</div>
+    <div class="annot-why">Message is the primary conversion goal. Equal-width side-by-side CTAs split attention. Stacking with Message larger reinforces hierarchy without hiding "View profile".</div>
+  </div>
+
+  <div class="annot-item">
+    <div class="annot-tag">Modal</div>
+    <div class="annot-change">Rate label above value (not below)</div>
+    <div class="annot-why">Label → value mirrors natural reading order. Previous layout had value first, requiring the eye to backtrack to understand what the number meant.</div>
   </div>
 </div>
 
@@ -422,19 +721,24 @@
     const grid = document.getElementById("cardGrid");
     grid.innerHTML = "";
     data.forEach(c => {
+      const aiScore = 55 + (c.id * 17) % 43; // deterministic pseudo-score 55–97
       const el = document.createElement("div");
       el.className = "card";
-      el.onclick = () => openModal(c);
+      el.onclick = () => openModal(c, aiScore);
+      el.style.background = hashColor(c.id);
       el.innerHTML = `
         <img class="card-img" src="${c.photo}" alt="${c.name}"
-             onerror="this.style.display='none';this.nextElementSibling&&this.nextElementSibling.remove();this.insertAdjacentHTML('afterend','<div class=\\"card-img placeholder\\" style=\\"background:${hashColor(c.id)};display:flex;align-items:center;justify-content:center;font-size:3rem;aspect-ratio:3/4\\">👤</div>')" />
+             onerror="this.src='';this.style.display='none'" />
+        <div class="card-gradient"></div>
         <div class="card-rate">${c.rate}/hr</div>
+        <div class="card-ai">⚡ ${aiScore}</div>
         <div class="card-footer">
           <div class="card-flag">${getFlag(c.country)}</div>
-          <div class="card-title">${c.job}</div>
           <div class="card-name">${c.name}</div>
+          <div class="card-title">${c.job}</div>
           <div class="card-tags">${c.skills.slice(0,2).map(s=>`<span class="card-tag">${s}</span>`).join("")}</div>
-        </div>`;
+        </div>
+        <div class="card-cta">Quick Preview →</div>`;
       grid.appendChild(el);
     });
     document.getElementById("resultCount").textContent = data.length >= 40 ? "1,000+ candidates found" : `${data.length} candidate${data.length!==1?"s":""} found`;
@@ -456,23 +760,33 @@
     buildGrid(filtered);
   }
 
-  function openModal(c){
+  function openModal(c, aiScore){
+    aiScore = aiScore || (55 + (c.id * 17) % 43);
+
     document.getElementById("modalJob").textContent    = c.job;
     document.getElementById("modalName").textContent   = c.name;
-    document.getElementById("modalLoc").textContent    = getFlag(c.country);
+    document.getElementById("modalLoc").innerHTML      = getFlag(c.country);
     document.getElementById("modalRate").textContent   = c.rate === "$-" ? "--" : c.rate + "/hr";
     document.getElementById("modalRate").className     = "rate-val" + (c.rate==="$-"?" dash":"");
     document.getElementById("modalAnnual").textContent = c.annual;
     document.getElementById("modalBio").textContent    = c.bio;
 
-    const mPhoto = document.getElementById("modalPhoto");
-    mPhoto.outerHTML = `<img id="modalPhoto" class="modal-photo" src="${c.photo}" alt="${c.name}" onerror="this.style.background='${hashColor(c.id)}';this.style.display='flex';this.style.alignItems='center';this.style.justifyContent='center';this.innerHTML='<span style=\\"font-size:6rem\\">👤</span>'" />`;
+    // AI score bar
+    document.getElementById("modalAiScore").textContent = aiScore;
+    document.getElementById("modalAiBar").style.width   = aiScore + "%";
 
-    const mAvatar = document.getElementById("modalAvatar");
-    mAvatar.outerHTML = `<img id="modalAvatar" class="modal-avatar" src="${c.photo}" alt="${c.name}" onerror="this.style.background='${hashColor(c.id)}';this.innerHTML='👤'" />`;
+    // Video panel photo
+    const vi = document.getElementById("modalVideoImg");
+    vi.src = c.photo; vi.alt = c.name;
+    document.getElementById("modalVideoPanel").style.background = hashColor(c.id);
 
-    const tags = document.getElementById("modalTags");
-    tags.innerHTML = c.skills.map(s=>`<span class="modal-tag">${s}</span>`).join("");
+    // Avatar (face continuity from card)
+    const av = document.getElementById("modalAvatar");
+    av.src = c.photo; av.alt = c.name;
+    av.onerror = () => { av.style.background = hashColor(c.id); av.src=""; };
+
+    // Skills
+    document.getElementById("modalTags").innerHTML = c.skills.map(s=>`<span class="modal-tag">${s}</span>`).join("");
 
     document.getElementById("overlay").classList.add("open");
     document.body.style.overflow = "hidden";
@@ -508,6 +822,11 @@
   function toggleMore(){
     const btn = document.querySelector(".see-more");
     btn.textContent = btn.textContent.includes("▾") ? "See less ▴" : "See more ▾";
+  }
+
+  function toggleAnnotations(){
+    const p = document.getElementById("annotPanel");
+    p.classList.toggle("open");
   }
 
   // Initial render

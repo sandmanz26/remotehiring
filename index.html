@@ -312,62 +312,121 @@
     body.mode-original .btn-view:hover { background: var(--accent); color: var(--white); }
 
     /* ══════════════════════════════════════════════
-       MODE: REDESIGN (Option A)
+       MODE: REDESIGN (Option A) — Content Card
     ══════════════════════════════════════════════ */
-    body.mode-redesign .card {
-      border-radius: 16px; overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-      cursor: pointer; position: relative;
-      aspect-ratio: 3/4; background: #d1d5db;
-      transition: box-shadow 0.2s, transform 0.2s;
+    body.mode-redesign .grid {
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px; padding: 24px 32px;
     }
-    body.mode-redesign .card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.18); transform: translateY(-4px); }
 
+    /* Card: white content card, not full-photo */
+    body.mode-redesign .card {
+      background: var(--white);
+      border-radius: 16px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: 1px solid var(--border);
+      cursor: pointer; position: relative;
+      aspect-ratio: unset;
+      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+      display: flex; flex-direction: column;
+    }
+    body.mode-redesign .card:hover {
+      box-shadow: 0 10px 30px rgba(0,0,0,0.13);
+      transform: translateY(-3px);
+      border-color: #c7d7ff;
+    }
+
+    /* Top photo strip — compact, not full-bleed */
     body.mode-redesign .card-img {
-      width: 100%; height: 100%; object-fit: cover;
-      display: block; position: absolute; inset: 0;
+      width: 100%; height: 140px; object-fit: cover;
+      object-position: top;
+      display: block; flex-shrink: 0; position: static;
     }
-    body.mode-redesign .card-gradient {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(5,10,30,0.90) 0%, rgba(5,10,30,0.45) 45%, transparent 72%);
-    }
-    body.mode-redesign .card-rate {
-      position: absolute; top: 12px; left: 12px;
-      background: rgba(10,20,60,0.75); backdrop-filter: blur(6px);
-      color: var(--white); border-radius: 20px;
-      padding: 4px 11px; font-size: 0.72rem; font-weight: 700;
-      border: 1px solid rgba(255,255,255,0.15);
-    }
+    body.mode-redesign .card-gradient { display: none; }
     body.mode-redesign .card-ai {
-      position: absolute; top: 12px; right: 12px;
-      background: rgba(250,180,0,0.88); backdrop-filter: blur(6px);
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(250,180,0,0.92);
       color: #1a1100; border-radius: 20px;
-      padding: 4px 9px; font-size: 0.68rem; font-weight: 800;
+      padding: 3px 9px; font-size: 0.67rem; font-weight: 800;
       display: flex; align-items: center; gap: 3px;
     }
+
+    /* Content body */
+    body.mode-redesign .card-body {
+      padding: 14px 14px 12px;
+      display: flex; flex-direction: column; gap: 6px; flex: 1;
+    }
+    /* Job title — 2 lines max, primary focus */
+    body.mode-redesign .card-title {
+      font-size: 0.9rem; font-weight: 800; color: var(--text);
+      line-height: 1.35;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden; margin: 0;
+    }
+    /* Name */
+    body.mode-redesign .card-name {
+      font-size: 0.78rem; font-weight: 600; color: var(--muted);
+      margin: 0;
+    }
+    /* Years of experience */
+    body.mode-redesign .card-exp {
+      font-size: 0.72rem; color: var(--accent); font-weight: 600;
+      display: flex; align-items: center; gap: 4px;
+    }
+    /* Skills chips — max 2 lines */
+    body.mode-redesign .card-tags {
+      display: flex; gap: 5px; flex-wrap: wrap;
+      max-height: 50px; overflow: hidden;
+    }
+    body.mode-redesign .card-tag {
+      background: var(--tag-bg); color: var(--tag-color);
+      border: 1px solid #c7d7ff; border-radius: 20px;
+      padding: 2px 9px; font-size: 0.67rem; font-weight: 500;
+    }
+    /* Footer row: flag + rate */
     body.mode-redesign .card-footer {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 0 14px 14px; z-index: 1; display: block;
-      background: none;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 14px 11px;
+      border-top: 1px solid var(--border);
+      margin-top: auto; position: static;
+      background: #fafafa;
     }
-    body.mode-redesign .card-name  { font-size: 1rem; font-weight: 800; color: var(--white); line-height: 1.2; margin-bottom: 2px; }
-    body.mode-redesign .card-title { font-size: 0.73rem; color: rgba(255,255,255,0.78); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px; }
-    body.mode-redesign .card-flag  { font-size: 0.7rem; color: rgba(255,255,255,0.6); margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
-    body.mode-redesign .card-tags  { display: flex; gap: 5px; flex-wrap: wrap; }
-    body.mode-redesign .card-tag   {
-      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
-      color: var(--white); border-radius: 20px;
-      padding: 2px 9px; font-size: 0.65rem; font-weight: 500;
-      backdrop-filter: blur(4px);
+    body.mode-redesign .card-flag {
+      font-size: 0.72rem; color: var(--muted);
+      display: flex; align-items: center; gap: 4px;
     }
-    body.mode-redesign .card-cta {
-      position: absolute; bottom: 0; left: 0; right: 0;
+    body.mode-redesign .card-rate {
+      font-size: 0.78rem; font-weight: 800; color: var(--green);
+      position: static; background: none;
+      border: none; padding: 0;
+    }
+
+    /* Hover overlay — 2 action buttons */
+    body.mode-redesign .card-cta { display: none; }
+    body.mode-redesign .card-hover-actions {
+      position: absolute; inset: 0; z-index: 10;
+      background: rgba(5,10,30,0.72);
+      backdrop-filter: blur(3px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+      opacity: 0; transition: opacity 0.2s ease;
+      border-radius: 16px;
+    }
+    body.mode-redesign .card:hover .card-hover-actions { opacity: 1; }
+    body.mode-redesign .hover-btn {
+      width: 180px; border: none; border-radius: 10px;
+      padding: 11px 0; font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 8px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    body.mode-redesign .hover-btn:hover { transform: scale(1.04); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+    body.mode-redesign .hover-btn-video {
+      background: var(--white); color: var(--navy);
+    }
+    body.mode-redesign .hover-btn-detail {
       background: var(--accent); color: var(--white);
-      font-size: 0.78rem; font-weight: 700; text-align: center;
-      padding: 10px; transform: translateY(100%);
-      transition: transform 0.2s ease; z-index: 2;
     }
-    body.mode-redesign .card:hover .card-cta { transform: translateY(0); }
 
     /* Redesign modal */
     body.mode-redesign .modal-orig-photo  { display: none; }
@@ -491,6 +550,67 @@
     .modal-close:hover { background: #e5e7eb; color: var(--text); }
     .modal-body { flex: 1; overflow-y: auto; position: relative; }
     .modal-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+
+    /* ── VIDEO POPUP ── */
+    .vid-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(5,10,30,0.80); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .vid-overlay.open { display: flex; }
+
+    .vid-modal {
+      background: #0d1120; border-radius: 18px; overflow: hidden;
+      width: min(520px, 100%); box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+      animation: fadeUp 0.22s cubic-bezier(.22,.68,0,1.2);
+      position: relative; display: flex; flex-direction: column;
+    }
+    .vid-close {
+      position: absolute; top: 12px; right: 12px; z-index: 10;
+      background: rgba(255,255,255,0.12); border: none; border-radius: 50%;
+      width: 30px; height: 30px; color: #fff; font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .vid-close:hover { background: rgba(255,255,255,0.22); }
+
+    .vid-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 18px 14px;
+    }
+    .vid-avatar {
+      width: 42px; height: 42px; border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--accent); flex-shrink: 0;
+    }
+    .vid-name { font-size: 0.95rem; font-weight: 800; color: #fff; }
+    .vid-job  { font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+    .vid-player {
+      position: relative; width: 100%;
+      aspect-ratio: 9/16; max-height: 55vh; background: #000;
+      overflow: hidden;
+    }
+    .vid-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 10px;
+      background: #111;
+    }
+    .vid-placeholder.hidden { display: none; }
+    .vid-play-big {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; color: #fff; padding-left: 4px;
+    }
+    .vid-placeholder-label { color: rgba(255,255,255,0.45); font-size: 0.8rem; }
+
+    .vid-footer {
+      padding: 12px 18px; display: flex; align-items: center; gap: 8px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .vid-rate-val { font-size: 0.88rem; font-weight: 800; color: #4ade80; }
+    .vid-divider  { color: rgba(255,255,255,0.25); }
+    .vid-loc      { font-size: 0.78rem; color: rgba(255,255,255,0.5); }
 
     /* ── ANNOTATIONS PANEL ── */
     .annot-toggle {
@@ -665,6 +785,33 @@
   </div>
 </div>
 
+<!-- VIDEO POPUP MODAL -->
+<div class="vid-overlay" id="vidOverlay" onclick="closeVideoPopup(event)">
+  <div class="vid-modal">
+    <button class="vid-close" onclick="closeVideoPopupBtn()">✕</button>
+    <div class="vid-header" id="vidHeader">
+      <img class="vid-avatar" id="vidAvatar" src="" alt="" />
+      <div>
+        <div class="vid-name" id="vidName"></div>
+        <div class="vid-job"  id="vidJob"></div>
+      </div>
+    </div>
+    <div class="vid-player">
+      <video id="vidEl" controls autoplay muted loop playsinline
+             style="width:100%;height:100%;object-fit:contain;background:#000;display:block;"></video>
+      <div class="vid-placeholder" id="vidPlaceholder">
+        <div class="vid-play-big">▶</div>
+        <div class="vid-placeholder-label">Video Resume</div>
+      </div>
+    </div>
+    <div class="vid-footer">
+      <span id="vidRate" class="vid-rate-val"></span>
+      <span class="vid-divider">·</span>
+      <span id="vidCountry" class="vid-loc"></span>
+    </div>
+  </div>
+</div>
+
 <!-- ANNOTATIONS (redesign only) -->
 <button class="annot-toggle" onclick="toggleAnnotations()">📋 Design Notes</button>
 <div class="annot-panel" id="annotPanel">
@@ -721,46 +868,46 @@
   function portrait(g,n){ return `https://randomuser.me/api/portraits/${g}/${n}.jpg`; }
 
   const CANDIDATES = [
-    {id:1,  job:"Cold Calling and Sales Specialist",         name:"Sawyer Davis",         country:"USA",          rate:"$-",  annual:"--",   skills:["Sales","Salesforce"],                               bio:"Experienced cold caller with a proven track record in B2B sales and CRM management.",                    photo:portrait("men",  1)},
-    {id:2,  job:"Sales Development Representative",          name:"Noluthando Zuma",      country:"South Africa", rate:"$14", annual:"--",   skills:["Sales","Appointment Setter","Salesforce"],          bio:"Appointment setter and Sales development Representative with 3 years of experience.",                   photo:portrait("women",2)},
-    {id:3,  job:"Precision Appointment Setting Specialist",  name:"Kylah Ignacio",        country:"Philippines",  rate:"$7",  annual:"--",   skills:["Appointment Setter","Client Relations"],            bio:"Dedicated appointment setter with excellent communication skills and a client-first approach.",         photo:portrait("women",3)},
-    {id:4,  job:"Expert Sales and Client Relations Manager", name:"Adela Ledezma-Rivera", country:"USA",          rate:"$-",  annual:"--",   skills:["Sales","Customer Satisfaction"],                    bio:"Bilingual sales professional skilled in building lasting client relationships.",                        photo:portrait("women",4)},
-    {id:5,  job:"BDR | SDR",                                 name:"Ruth",                 country:"Ethiopia",     rate:"$5",  annual:"--",   skills:["Lead Generation","Pipeline Management"],            bio:"Business development rep specialising in outbound prospecting and pipeline building.",                  photo:portrait("women",5)},
-    {id:6,  job:"Virtual Executive Assistant",               name:"Amara Osei",           country:"Ghana",        rate:"$8",  annual:"--",   skills:["Virtual Assistant","Calendar Management"],         bio:"Organised and proactive virtual assistant supporting C-suite executives globally.",                     photo:portrait("women",6)},
-    {id:7,  job:"Lead Generation Expert",                    name:"Sofia Reyes",          country:"Colombia",     rate:"$6",  annual:"--",   skills:["Lead Generation","Email Outreach","CRM"],          bio:"Specialist in outbound lead generation using LinkedIn, email campaigns, and CRM tools.",                photo:portrait("women",7)},
-    {id:8,  job:"Full Stack Software Engineer",              name:"James Nguyen",         country:"Philippines",  rate:"$18", annual:"$35k", skills:["Software Engineering","React","Node.js"],          bio:"Full-stack developer with 5+ years building scalable web applications.",                               photo:portrait("men",  8)},
-    {id:9,  job:"Social Media & Marketing Manager",          name:"Priya Sharma",         country:"India",        rate:"$9",  annual:"--",   skills:["Marketing","Social Media","Content Creation"],     bio:"Creative digital marketer experienced in growing brand presence across multiple platforms.",             photo:portrait("women",9)},
-    {id:10, job:"Customer Success Specialist",               name:"Emmanuel Owusu",       country:"Kenya",        rate:"$7",  annual:"--",   skills:["Customer Success","Onboarding","Support"],         bio:"Dedicated customer success professional focused on reducing churn and driving expansion revenue.",       photo:portrait("men", 10)},
-    {id:11, job:"Data Entry & Admin Specialist",             name:"Maria Santos",         country:"Philippines",  rate:"$5",  annual:"--",   skills:["Data Entry","Admin","Excel"],                      bio:"Fast and accurate data entry specialist with over 4 years of administrative experience.",               photo:portrait("women",11)},
-    {id:12, job:"SDR – Tech Sales",                          name:"Carlos Mendez",        country:"Mexico",       rate:"$10", annual:"--",   skills:["Sales","Lead Generation","HubSpot"],               bio:"Tech-savvy SDR experienced in SaaS sales cycles and outbound prospecting.",                            photo:portrait("men", 12)},
-    {id:13, job:"Backend Python Developer",                  name:"Ahmed Hassan",         country:"Egypt",        rate:"$20", annual:"$40k", skills:["Software Engineering","Python","Django"],          bio:"Backend developer specialising in REST APIs, microservices, and cloud deployments.",                    photo:portrait("men", 13)},
-    {id:14, job:"WordPress & Shopify Developer",             name:"Fatima Al-Rashid",     country:"Pakistan",     rate:"$12", annual:"--",   skills:["Web Development","WordPress","Shopify"],           bio:"E-commerce developer with expertise in custom WordPress and Shopify theme development.",               photo:portrait("women",14)},
-    {id:15, job:"Outbound Sales Representative",             name:"Ana Lima",             country:"Brazil",       rate:"$8",  annual:"--",   skills:["Sales","Cold Calling","CRM"],                      bio:"Results-driven outbound sales rep with a history of exceeding monthly quotas.",                        photo:portrait("women",15)},
-    {id:16, job:"HR & Recruitment Specialist",               name:"Blessing Nwosu",       country:"Nigeria",      rate:"$9",  annual:"--",   skills:["HR","Recruitment","Talent Acquisition"],           bio:"HR professional with expertise in end-to-end recruitment for remote-first companies.",                  photo:portrait("women",16)},
-    {id:17, job:"UI/UX Designer",                            name:"Yuki Tanaka",          country:"Philippines",  rate:"$15", annual:"$28k", skills:["UI/UX","Figma","Prototyping"],                    bio:"Product designer creating clean, user-centred interfaces for mobile and web applications.",             photo:portrait("women",17)},
-    {id:18, job:"DevOps & Cloud Engineer",                   name:"Ravi Patel",           country:"India",        rate:"$22", annual:"$44k", skills:["DevOps","AWS","Docker","Kubernetes"],              bio:"Cloud engineer automating infrastructure and CI/CD pipelines for high-growth startups.",                photo:portrait("men", 18)},
-    {id:19, job:"Content Writer & SEO Specialist",           name:"Grace Abiodun",        country:"Nigeria",      rate:"$7",  annual:"--",   skills:["Content Writing","SEO","Copywriting"],             bio:"Versatile writer producing SEO-optimised long-form content, blogs, and marketing copy.",               photo:portrait("women",19)},
-    {id:20, job:"Virtual Assistant – Operations",            name:"Layla Ibrahim",        country:"Egypt",        rate:"$6",  annual:"--",   skills:["Virtual Assistant","Operations","Notion"],         bio:"Operations-focused VA skilled in project coordination, SOP creation, and tool automation.",             photo:portrait("women",20)},
-    {id:21, job:"Inside Sales Representative",               name:"Miguel Torres",        country:"Venezuela",    rate:"$9",  annual:"--",   skills:["Sales","Inside Sales","Pipedrive"],                bio:"Tenacious inside sales rep with deep experience in consultative selling for SaaS products.",           photo:portrait("men", 21)},
-    {id:22, job:"iOS & Android Mobile Developer",            name:"Siti Rahayu",          country:"Indonesia",    rate:"$18", annual:"$36k", skills:["Mobile Dev","React Native","Swift"],              bio:"Cross-platform mobile developer delivering polished iOS and Android applications.",                     photo:portrait("women",22)},
-    {id:23, job:"Email Marketing Specialist",                name:"Aisha Conteh",         country:"Ghana",        rate:"$8",  annual:"--",   skills:["Email Marketing","Klaviyo","Mailchimp"],           bio:"Email marketer driving engagement and revenue through strategic automation sequences.",                 photo:portrait("women",23)},
-    {id:24, job:"Bookkeeper & Accounting Assistant",         name:"Roberto Santos",       country:"Philippines",  rate:"$10", annual:"--",   skills:["Bookkeeping","QuickBooks","Accounting"],           bio:"Detail-oriented bookkeeper managing accounts payable, receivable, and monthly reconciliations.",        photo:portrait("men", 24)},
-    {id:25, job:"Account Executive – SaaS",                  name:"Zara Okonkwo",         country:"Nigeria",      rate:"$12", annual:"$22k", skills:["Sales","Account Executive","Salesforce"],         bio:"High-performing AE closing mid-market SaaS deals through discovery, demo, and negotiation.",           photo:portrait("women",25)},
-    {id:26, job:"QA Tester & Automation Engineer",           name:"Dani Park",            country:"Philippines",  rate:"$14", annual:"--",   skills:["QA","Selenium","Cypress","Testing"],               bio:"QA engineer building automated test suites that cut regression time by over 70%.",                     photo:portrait("men", 26)},
-    {id:27, job:"Graphic Designer",                          name:"Isabella Cruz",        country:"Colombia",     rate:"$10", annual:"--",   skills:["Graphic Design","Adobe Illustrator","Canva"],      bio:"Creative graphic designer specialising in brand identity, social media assets, and print design.",     photo:portrait("women",27)},
-    {id:28, job:"Telemarketer & Appointment Setter",         name:"Samuel Osei",          country:"Ghana",        rate:"$5",  annual:"--",   skills:["Telemarketing","Appointment Setter","Scripts"],    bio:"High-energy telemarketer setting qualified appointments for financial and insurance products.",         photo:portrait("men", 28)},
-    {id:29, job:"Data Analyst",                              name:"Meera Krishnan",       country:"India",        rate:"$16", annual:"$30k", skills:["Data Analysis","Python","Tableau","SQL"],         bio:"Data analyst transforming raw data into actionable business insights using Python and Tableau.",        photo:portrait("women",29)},
-    {id:30, job:"Bilingual Customer Support Agent",          name:"Luis Vásquez",         country:"Mexico",       rate:"$7",  annual:"--",   skills:["Customer Support","English","Spanish","Zendesk"], bio:"Bilingual support agent providing fast, empathetic resolutions across email, chat, and phone.",        photo:portrait("men", 30)},
-    {id:31, job:"Project Manager – Remote Teams",            name:"Nadia Rahman",         country:"Bangladesh",   rate:"$13", annual:"--",   skills:["Project Management","Asana","Agile"],              bio:"Certified project manager coordinating distributed teams across multiple time zones.",                  photo:portrait("women",31)},
-    {id:32, job:"Outbound Appointment Setter",               name:"Tendai Moyo",          country:"South Africa", rate:"$6",  annual:"--",   skills:["Appointment Setter","Outbound","Cold Calling"],    bio:"Persistent appointment setter consistently hitting 40+ qualified bookings per week.",                  photo:portrait("men", 32)},
-    {id:33, job:"React Frontend Developer",                  name:"Kim Jae-won",          country:"Philippines",  rate:"$17", annual:"$32k", skills:["React","TypeScript","Tailwind","Frontend"],       bio:"Frontend developer crafting pixel-perfect, performant interfaces with React and TypeScript.",          photo:portrait("men", 33)},
-    {id:34, job:"Social Selling & LinkedIn Outreach",        name:"Chiamaka Eze",         country:"Nigeria",      rate:"$7",  annual:"--",   skills:["LinkedIn","Social Selling","Lead Generation"],    bio:"LinkedIn outreach specialist generating warm leads for B2B companies through personalised messaging.", photo:portrait("women",34)},
-    {id:35, job:"Technical Support Engineer",                name:"Mark Villanueva",      country:"Philippines",  rate:"$11", annual:"--",   skills:["Technical Support","Linux","Networking","Jira"],  bio:"Tier-2 technical support engineer resolving complex product and infrastructure issues.",               photo:portrait("men", 35)},
-    {id:36, job:"E-commerce VA & Product Lister",            name:"Hana Putri",           country:"Indonesia",    rate:"$5",  annual:"--",   skills:["E-commerce","Amazon","eBay","Product Listing"],   bio:"E-commerce VA experienced in bulk product listing, SEO optimisation, and order management.",          photo:portrait("women",36)},
-    {id:37, job:"Video Editor & Content Creator",            name:"Kofi Mensah",          country:"Ghana",        rate:"$8",  annual:"--",   skills:["Video Editing","Premiere Pro","YouTube"],         bio:"Video editor producing engaging content for YouTube channels and social media brands.",                photo:portrait("men", 37)},
-    {id:38, job:"CRM Administrator",                         name:"Patricia Ocampo",      country:"Colombia",     rate:"$10", annual:"--",   skills:["CRM","HubSpot","Salesforce","Admin"],              bio:"CRM admin maintaining clean pipelines, building reports, and training sales teams on best practices.",  photo:portrait("women",38)},
-    {id:39, job:"Growth Hacker & Digital Marketer",          name:"Tariq Farouk",         country:"Egypt",        rate:"$11", annual:"--",   skills:["Growth Hacking","Facebook Ads","Google Ads"],     bio:"Digital marketer running paid campaigns that consistently deliver 4x+ ROAS.",                         photo:portrait("men", 39)},
-    {id:40, job:"Executive Virtual Assistant",               name:"Joy Okafor",           country:"Nigeria",      rate:"$8",  annual:"--",   skills:["Virtual Assistant","Scheduling","Email Mgmt"],    bio:"Executive VA keeping C-suite inboxes and calendars running like clockwork.",                          photo:portrait("women",40)},
+    {id:1,  exp:4, job:"Cold Calling and Sales Specialist",         name:"Sawyer Davis",         country:"USA",          rate:"$-",  annual:"--",   skills:["Sales","Salesforce","Cold Calling","B2B"],                       bio:"Experienced cold caller with a proven track record in B2B sales and CRM management.",                    photo:portrait("men",  1)},
+    {id:2,  exp:3, job:"Sales Development Representative",          name:"Noluthando Zuma",      country:"South Africa", rate:"$14", annual:"--",   skills:["Sales","Appointment Setter","Salesforce","Outbound"],            bio:"Appointment setter and Sales development Representative with 3 years of experience.",                   photo:portrait("women",2)},
+    {id:3,  exp:2, job:"Precision Appointment Setting Specialist",  name:"Kylah Ignacio",        country:"Philippines",  rate:"$7",  annual:"--",   skills:["Appointment Setter","Client Relations","CRM","Scheduling"],      bio:"Dedicated appointment setter with excellent communication skills and a client-first approach.",         photo:portrait("women",3)},
+    {id:4,  exp:6, job:"Expert Sales and Client Relations Manager", name:"Adela Ledezma-Rivera", country:"USA",          rate:"$-",  annual:"--",   skills:["Sales","Customer Satisfaction","Bilingual","CRM"],               bio:"Bilingual sales professional skilled in building lasting client relationships.",                        photo:portrait("women",4)},
+    {id:5,  exp:2, job:"BDR | SDR",                                 name:"Ruth",                 country:"Ethiopia",     rate:"$5",  annual:"--",   skills:["Lead Generation","Pipeline Mgmt","Outbound","HubSpot"],          bio:"Business development rep specialising in outbound prospecting and pipeline building.",                  photo:portrait("women",5)},
+    {id:6,  exp:5, job:"Virtual Executive Assistant",               name:"Amara Osei",           country:"Ghana",        rate:"$8",  annual:"--",   skills:["Virtual Assistant","Calendar Mgmt","Notion","Email Mgmt"],       bio:"Organised and proactive virtual assistant supporting C-suite executives globally.",                     photo:portrait("women",6)},
+    {id:7,  exp:4, job:"Lead Generation Expert",                    name:"Sofia Reyes",          country:"Colombia",     rate:"$6",  annual:"--",   skills:["Lead Generation","Email Outreach","CRM","LinkedIn"],             bio:"Specialist in outbound lead generation using LinkedIn, email campaigns, and CRM tools.",                photo:portrait("women",7)},
+    {id:8,  exp:5, job:"Full Stack Software Engineer",              name:"James Nguyen",         country:"Philippines",  rate:"$18", annual:"$35k", skills:["Software Engineering","React","Node.js","PostgreSQL"],           bio:"Full-stack developer with 5+ years building scalable web applications.",                               photo:portrait("men",  8)},
+    {id:9,  exp:4, job:"Social Media & Marketing Manager",          name:"Priya Sharma",         country:"India",        rate:"$9",  annual:"--",   skills:["Marketing","Social Media","Content Creation","Canva"],           bio:"Creative digital marketer experienced in growing brand presence across multiple platforms.",             photo:portrait("women",9)},
+    {id:10, exp:3, job:"Customer Success Specialist",               name:"Emmanuel Owusu",       country:"Kenya",        rate:"$7",  annual:"--",   skills:["Customer Success","Onboarding","Support","Zendesk"],             bio:"Dedicated customer success professional focused on reducing churn and driving expansion revenue.",       photo:portrait("men", 10)},
+    {id:11, exp:4, job:"Data Entry & Admin Specialist",             name:"Maria Santos",         country:"Philippines",  rate:"$5",  annual:"--",   skills:["Data Entry","Admin","Excel","Google Sheets"],                    bio:"Fast and accurate data entry specialist with over 4 years of administrative experience.",               photo:portrait("women",11)},
+    {id:12, exp:3, job:"SDR – Tech Sales",                          name:"Carlos Mendez",        country:"Mexico",       rate:"$10", annual:"--",   skills:["Sales","Lead Generation","HubSpot","SaaS"],                      bio:"Tech-savvy SDR experienced in SaaS sales cycles and outbound prospecting.",                            photo:portrait("men", 12)},
+    {id:13, exp:6, job:"Backend Python Developer",                  name:"Ahmed Hassan",         country:"Egypt",        rate:"$20", annual:"$40k", skills:["Python","Django","REST API","Docker"],                           bio:"Backend developer specialising in REST APIs, microservices, and cloud deployments.",                    photo:portrait("men", 13)},
+    {id:14, exp:4, job:"WordPress & Shopify Developer",             name:"Fatima Al-Rashid",     country:"Pakistan",     rate:"$12", annual:"--",   skills:["WordPress","Shopify","PHP","WooCommerce"],                       bio:"E-commerce developer with expertise in custom WordPress and Shopify theme development.",               photo:portrait("women",14)},
+    {id:15, exp:3, job:"Outbound Sales Representative",             name:"Ana Lima",             country:"Brazil",       rate:"$8",  annual:"--",   skills:["Sales","Cold Calling","CRM","Pipedrive"],                        bio:"Results-driven outbound sales rep with a history of exceeding monthly quotas.",                        photo:portrait("women",15)},
+    {id:16, exp:5, job:"HR & Recruitment Specialist",               name:"Blessing Nwosu",       country:"Nigeria",      rate:"$9",  annual:"--",   skills:["HR","Recruitment","Talent Acquisition","ATS"],                   bio:"HR professional with expertise in end-to-end recruitment for remote-first companies.",                  photo:portrait("women",16)},
+    {id:17, exp:4, job:"UI/UX Designer",                            name:"Yuki Tanaka",          country:"Philippines",  rate:"$15", annual:"$28k", skills:["UI/UX","Figma","Prototyping","User Research"],                   bio:"Product designer creating clean, user-centred interfaces for mobile and web applications.",             photo:portrait("women",17)},
+    {id:18, exp:7, job:"DevOps & Cloud Engineer",                   name:"Ravi Patel",           country:"India",        rate:"$22", annual:"$44k", skills:["DevOps","AWS","Docker","Kubernetes"],                            bio:"Cloud engineer automating infrastructure and CI/CD pipelines for high-growth startups.",                photo:portrait("men", 18)},
+    {id:19, exp:3, job:"Content Writer & SEO Specialist",           name:"Grace Abiodun",        country:"Nigeria",      rate:"$7",  annual:"--",   skills:["Content Writing","SEO","Copywriting","WordPress"],               bio:"Versatile writer producing SEO-optimised long-form content, blogs, and marketing copy.",               photo:portrait("women",19)},
+    {id:20, exp:4, job:"Virtual Assistant – Operations",            name:"Layla Ibrahim",        country:"Egypt",        rate:"$6",  annual:"--",   skills:["Virtual Assistant","Operations","Notion","Asana"],               bio:"Operations-focused VA skilled in project coordination, SOP creation, and tool automation.",             photo:portrait("women",20)},
+    {id:21, exp:5, job:"Inside Sales Representative",               name:"Miguel Torres",        country:"Venezuela",    rate:"$9",  annual:"--",   skills:["Sales","Inside Sales","Pipedrive","Consultative Selling"],       bio:"Tenacious inside sales rep with deep experience in consultative selling for SaaS products.",           photo:portrait("men", 21)},
+    {id:22, exp:5, job:"iOS & Android Mobile Developer",            name:"Siti Rahayu",          country:"Indonesia",    rate:"$18", annual:"$36k", skills:["React Native","Swift","Kotlin","Mobile Dev"],                    bio:"Cross-platform mobile developer delivering polished iOS and Android applications.",                     photo:portrait("women",22)},
+    {id:23, exp:3, job:"Email Marketing Specialist",                name:"Aisha Conteh",         country:"Ghana",        rate:"$8",  annual:"--",   skills:["Email Marketing","Klaviyo","Mailchimp","Automation"],            bio:"Email marketer driving engagement and revenue through strategic automation sequences.",                 photo:portrait("women",23)},
+    {id:24, exp:4, job:"Bookkeeper & Accounting Assistant",         name:"Roberto Santos",       country:"Philippines",  rate:"$10", annual:"--",   skills:["Bookkeeping","QuickBooks","Xero","Accounting"],                  bio:"Detail-oriented bookkeeper managing accounts payable, receivable, and monthly reconciliations.",        photo:portrait("men", 24)},
+    {id:25, exp:6, job:"Account Executive – SaaS",                  name:"Zara Okonkwo",         country:"Nigeria",      rate:"$12", annual:"$22k", skills:["Sales","Account Executive","Salesforce","Negotiation"],          bio:"High-performing AE closing mid-market SaaS deals through discovery, demo, and negotiation.",           photo:portrait("women",25)},
+    {id:26, exp:4, job:"QA Tester & Automation Engineer",           name:"Dani Park",            country:"Philippines",  rate:"$14", annual:"--",   skills:["QA","Selenium","Cypress","Test Automation"],                     bio:"QA engineer building automated test suites that cut regression time by over 70%.",                     photo:portrait("men", 26)},
+    {id:27, exp:3, job:"Graphic Designer",                          name:"Isabella Cruz",        country:"Colombia",     rate:"$10", annual:"--",   skills:["Graphic Design","Illustrator","Canva","Branding"],               bio:"Creative graphic designer specialising in brand identity, social media assets, and print design.",     photo:portrait("women",27)},
+    {id:28, exp:2, job:"Telemarketer & Appointment Setter",         name:"Samuel Osei",          country:"Ghana",        rate:"$5",  annual:"--",   skills:["Telemarketing","Appointment Setter","Scripts","Dialpad"],        bio:"High-energy telemarketer setting qualified appointments for financial and insurance products.",         photo:portrait("men", 28)},
+    {id:29, exp:5, job:"Data Analyst",                              name:"Meera Krishnan",       country:"India",        rate:"$16", annual:"$30k", skills:["Python","Tableau","SQL","Data Analysis"],                        bio:"Data analyst transforming raw data into actionable business insights using Python and Tableau.",        photo:portrait("women",29)},
+    {id:30, exp:4, job:"Bilingual Customer Support Agent",          name:"Luis Vásquez",         country:"Mexico",       rate:"$7",  annual:"--",   skills:["Customer Support","English","Spanish","Zendesk"],               bio:"Bilingual support agent providing fast, empathetic resolutions across email, chat, and phone.",        photo:portrait("men", 30)},
+    {id:31, exp:6, job:"Project Manager – Remote Teams",            name:"Nadia Rahman",         country:"Bangladesh",   rate:"$13", annual:"--",   skills:["Project Management","Asana","Agile","Scrum"],                    bio:"Certified project manager coordinating distributed teams across multiple time zones.",                  photo:portrait("women",31)},
+    {id:32, exp:2, job:"Outbound Appointment Setter",               name:"Tendai Moyo",          country:"South Africa", rate:"$6",  annual:"--",   skills:["Appointment Setter","Outbound","Cold Calling","GoHighLevel"],    bio:"Persistent appointment setter consistently hitting 40+ qualified bookings per week.",                  photo:portrait("men", 32)},
+    {id:33, exp:5, job:"React Frontend Developer",                  name:"Kim Jae-won",          country:"Philippines",  rate:"$17", annual:"$32k", skills:["React","TypeScript","Tailwind","Next.js"],                       bio:"Frontend developer crafting pixel-perfect, performant interfaces with React and TypeScript.",          photo:portrait("men", 33)},
+    {id:34, exp:3, job:"Social Selling & LinkedIn Outreach",        name:"Chiamaka Eze",         country:"Nigeria",      rate:"$7",  annual:"--",   skills:["LinkedIn","Social Selling","Lead Generation","Copywriting"],     bio:"LinkedIn outreach specialist generating warm leads for B2B companies through personalised messaging.", photo:portrait("women",34)},
+    {id:35, exp:4, job:"Technical Support Engineer",                name:"Mark Villanueva",      country:"Philippines",  rate:"$11", annual:"--",   skills:["Technical Support","Linux","Networking","Jira"],                 bio:"Tier-2 technical support engineer resolving complex product and infrastructure issues.",               photo:portrait("men", 35)},
+    {id:36, exp:3, job:"E-commerce VA & Product Lister",            name:"Hana Putri",           country:"Indonesia",    rate:"$5",  annual:"--",   skills:["E-commerce","Amazon","eBay","Product Listing"],                  bio:"E-commerce VA experienced in bulk product listing, SEO optimisation, and order management.",          photo:portrait("women",36)},
+    {id:37, exp:4, job:"Video Editor & Content Creator",            name:"Kofi Mensah",          country:"Ghana",        rate:"$8",  annual:"--",   skills:["Video Editing","Premiere Pro","After Effects","YouTube"],        bio:"Video editor producing engaging content for YouTube channels and social media brands.",                photo:portrait("men", 37)},
+    {id:38, exp:5, job:"CRM Administrator",                         name:"Patricia Ocampo",      country:"Colombia",     rate:"$10", annual:"--",   skills:["CRM","HubSpot","Salesforce","Reporting"],                        bio:"CRM admin maintaining clean pipelines, building reports, and training sales teams on best practices.",  photo:portrait("women",38)},
+    {id:39, exp:4, job:"Growth Hacker & Digital Marketer",          name:"Tariq Farouk",         country:"Egypt",        rate:"$11", annual:"--",   skills:["Growth Hacking","Facebook Ads","Google Ads","Analytics"],        bio:"Digital marketer running paid campaigns that consistently deliver 4x+ ROAS.",                         photo:portrait("men", 39)},
+    {id:40, exp:3, job:"Executive Virtual Assistant",               name:"Joy Okafor",           country:"Nigeria",      rate:"$8",  annual:"--",   skills:["Virtual Assistant","Scheduling","Email Mgmt","Trello"],          bio:"Executive VA keeping C-suite inboxes and calendars running like clockwork.",                          photo:portrait("women",40)},
   ];
 
   let currentMode = 'original';
@@ -859,18 +1006,43 @@
         });
 
       } else {
+        // Redesign: content card (not full-photo)
+        const skillChips = c.skills.map(s => `<span class="card-tag">${s}</span>`).join("");
         el.innerHTML = `
-          <img class="card-img" src="${c.photo}" alt="${c.name}" onerror="this.style.display='none'" />
-          <div class="card-gradient"></div>
-          <div class="card-rate">${c.rate}/hr</div>
+          <img class="card-img" src="${c.photo}" alt="${c.name}" onerror="this.style.background='${hashColor(c.id)}'" />
           <div class="card-ai">⚡ ${aiScore}</div>
+
+          <div class="card-body">
+            <div class="card-title">${c.job}</div>
+            <div class="card-name">${c.name}</div>
+            <div class="card-exp">🕐 ${c.exp} yr${c.exp>1?'s':''} experience</div>
+            <div class="card-tags">${skillChips}</div>
+          </div>
+
           <div class="card-footer">
             <div class="card-flag">${getFlag(c.country)}</div>
-            <div class="card-name">${c.name}</div>
-            <div class="card-title">${c.job}</div>
-            <div class="card-tags">${c.skills.slice(0,2).map(s=>`<span class="card-tag">${s}</span>`).join("")}</div>
+            <div class="card-rate">${c.rate === '$-' ? 'Negotiable' : c.rate+'/hr'}</div>
           </div>
-          <div class="card-cta">Quick Preview →</div>`;
+
+          <div class="card-hover-actions">
+            <button class="hover-btn hover-btn-video" data-id="${c.id}">
+              ▶ Play Video Resume
+            </button>
+            <button class="hover-btn hover-btn-detail" data-id="${c.id}">
+              View Detail →
+            </button>
+          </div>`;
+
+        // Stop card onclick, delegate to buttons
+        el.onclick = null;
+        el.querySelector('.hover-btn-video').addEventListener('click', e => {
+          e.stopPropagation();
+          openVideoPopup(c);
+        });
+        el.querySelector('.hover-btn-detail').addEventListener('click', e => {
+          e.stopPropagation();
+          openModal(c, aiScore);
+        });
       }
       grid.appendChild(el);
     });
@@ -940,7 +1112,12 @@
 
   function closeModal(e){ if(e.target===document.getElementById("overlay")) closeModalBtn(); }
   function closeModalBtn(){ document.getElementById("overlay").classList.remove("open"); document.body.style.overflow=""; }
-  document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeModalBtn(); });
+  document.addEventListener("keydown", e=>{
+    if(e.key==="Escape"){
+      if(document.getElementById('vidOverlay').classList.contains('open')) closeVideoPopupBtn();
+      else closeModalBtn();
+    }
+  });
 
   function filterCards(){
     const q = document.getElementById("searchInput").value.toLowerCase();
@@ -971,6 +1148,38 @@
     const b = document.querySelector(".see-more");
     b.textContent = b.textContent.includes("▾") ? "See less ▴" : "See more ▾";
   }
+  function openVideoPopup(c){
+    const vid = VIDEOS[c.id % VIDEOS.length];
+    document.getElementById('vidAvatar').src = c.photo;
+    document.getElementById('vidName').textContent  = c.name;
+    document.getElementById('vidJob').textContent   = c.job;
+    document.getElementById('vidRate').textContent  = c.rate === '$-' ? 'Negotiable' : c.rate + '/hr';
+    document.getElementById('vidCountry').textContent = getFlag(c.country);
+
+    const vidEl = document.getElementById('vidEl');
+    const placeholder = document.getElementById('vidPlaceholder');
+    vidEl.src = vid;
+    vidEl.load();
+    vidEl.play().then(() => {
+      placeholder.classList.add('hidden');
+    }).catch(() => {
+      placeholder.classList.remove('hidden');
+    });
+
+    document.getElementById('vidOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeVideoPopup(e){
+    if(e.target === document.getElementById('vidOverlay')) closeVideoPopupBtn();
+  }
+  function closeVideoPopupBtn(){
+    document.getElementById('vidOverlay').classList.remove('open');
+    const vidEl = document.getElementById('vidEl');
+    vidEl.pause(); vidEl.src = '';
+    document.body.style.overflow = '';
+  }
+
   function toggleAnnotations(){
     document.getElementById("annotPanel").classList.toggle("open");
   }

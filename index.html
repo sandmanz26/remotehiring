@@ -29,27 +29,29 @@
     nav {
       background: var(--navy);
       display: flex; align-items: center;
-      padding: 0 28px; height: 68px;
-      position: sticky; top: 0; z-index: 100; gap: 0;
+      padding: 0 32px; height: 66px;
+      position: sticky; top: 0; z-index: 100;
     }
     .logo {
       cursor: pointer; flex-shrink: 0;
-      color: var(--white); font-size: 1.55rem; font-weight: 900;
-      letter-spacing: -1px; margin-right: 28px;
+      color: var(--white); font-size: 1.6rem; font-weight: 900;
+      letter-spacing: -1.5px; margin-right: 0;
     }
+    /* Search bar centered: auto margins push it to true center */
     .search-bar {
       display: flex; align-items: center;
       background: var(--white); border-radius: 50px;
-      padding: 0 6px 0 22px; height: 46px;
-      flex: 1; max-width: 520px;
+      padding: 0 6px 0 24px; height: 46px;
+      width: 480px; flex-shrink: 0;
+      margin: 0 auto;
     }
     .search-bar input {
       border: none; outline: none; flex: 1;
-      font-size: 0.97rem; color: var(--text); background: transparent;
+      font-size: 0.96rem; color: var(--text); background: transparent;
     }
     .search-bar input::placeholder { color: #9ca3af; }
     .search-btn {
-      background: #0f1f45; border: none; border-radius: 50%;
+      background: #0d1b3e; border: none; border-radius: 50%;
       width: 34px; height: 34px; min-width: 34px;
       display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
@@ -88,7 +90,7 @@
 
     /* ── CHIPS BAR (shared) ── */
     .chips-bar {
-      background: var(--navy); padding: 0 28px 14px;
+      background: var(--navy); padding: 0 32px 14px;
       display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
     }
     .chip.add-chip {
@@ -145,52 +147,56 @@
     /* ══════════════════════════════════════════════
        MODE: ORIGINAL
     ══════════════════════════════════════════════ */
-    body.mode-original .card {
-      background: #111; border-radius: 14px; overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      cursor: pointer; transition: transform 0.18s, box-shadow 0.18s;
-      position: relative; aspect-ratio: 3/4;
+    body.mode-original .grid {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px; padding: 20px 28px;
     }
-    body.mode-original .card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.18); }
 
-    /* Static thumbnail photo */
+    body.mode-original .card {
+      background: #111; border-radius: 12px; overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+      cursor: pointer; transition: transform 0.18s, box-shadow 0.18s;
+      position: relative; aspect-ratio: unset;
+    }
+    body.mode-original .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.13); }
+
+    /* Static thumbnail photo — fills card naturally */
     body.mode-original .card-img {
-      width: 100%; height: 100%; object-fit: cover;
+      width: 100%; aspect-ratio: 3/4; object-fit: cover;
       display: block; background: #d1d5db;
-      position: absolute; inset: 0;
+      position: relative; z-index: 1;
       transition: opacity 0.3s ease;
-      z-index: 1;
     }
     body.mode-original .card:hover .card-img { opacity: 0; }
 
-    /* Video element — hidden until hover */
+    /* Video element — absolute, same footprint as photo */
     body.mode-original .card-video {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%; object-fit: cover;
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: calc(100% - 0px);
+      /* match photo height = aspect-ratio 3/4 of width */
+      aspect-ratio: 3/4; object-fit: cover;
       opacity: 0; transition: opacity 0.3s ease;
       z-index: 2; background: #111;
     }
     body.mode-original .card:hover .card-video { opacity: 1; }
 
-    /* Ken Burns fallback when video not available */
+    /* Ken Burns fallback */
     body.mode-original .card-kb {
-      position: absolute; inset: 0;
-      background-size: cover; background-position: center;
-      opacity: 0; z-index: 2;
-      transition: opacity 0.3s ease;
+      position: absolute; top: 0; left: 0; right: 0;
+      aspect-ratio: 3/4; background-size: cover; background-position: center top;
+      opacity: 0; z-index: 2; transition: opacity 0.3s ease;
     }
-    body.mode-original .card.kb-active:hover .card-kb { opacity: 1; }
     body.mode-original .card.kb-active:hover .card-kb {
-      animation: kenBurns 6s ease-out infinite alternate;
+      opacity: 1; animation: kenBurns 6s ease-out infinite alternate;
     }
     @keyframes kenBurns {
       0%   { transform: scale(1)    translate(0, 0); }
-      100% { transform: scale(1.12) translate(-2%, -2%); }
+      100% { transform: scale(1.10) translate(-2%, -2%); }
     }
 
     /* REC indicator */
     body.mode-original .card-rec {
-      position: absolute; top: 10px; left: 12px; z-index: 4;
+      position: absolute; top: 10px; left: 12px; z-index: 5;
       display: flex; align-items: center; gap: 5px;
       background: rgba(0,0,0,0.50); backdrop-filter: blur(6px);
       border-radius: 20px; padding: 3px 9px;
@@ -204,37 +210,49 @@
     }
     body.mode-original .rec-label { font-size: 0.65rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
 
-    /* Video progress bar at bottom */
+    /* Video progress bar */
     body.mode-original .card-progress {
-      position: absolute; bottom: 0; left: 0; right: 0; z-index: 4;
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 5;
       height: 3px; background: rgba(255,255,255,0.2);
       opacity: 0; transition: opacity 0.25s 0.2s;
     }
     body.mode-original .card:hover .card-progress { opacity: 1; }
-    body.mode-original .card-progress-fill {
-      height: 100%; background: #fff; width: 0%;
-      transition: none;
-    }
+    body.mode-original .card-progress-fill { height: 100%; background: #fff; width: 0%; }
 
     body.mode-original .card-gradient { display: none; }
     body.mode-original .card-ai       { display: none; }
     body.mode-original .card-cta      { display: none; }
 
+    /* Footer overlay — sits on top of photo */
     body.mode-original .card-footer {
-      position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
-      background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.3) 70%, transparent 100%);
-      padding: 32px 12px 14px;
+      position: relative; z-index: 3;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.45) 60%, transparent 100%);
+      margin-top: -60px; /* pull up over the photo */
+      padding: 60px 12px 12px;
     }
-    body.mode-original .card-flag  { font-size: 0.75rem; color: rgba(255,255,255,0.85); margin-bottom: 3px; }
-    body.mode-original .card-title { font-size: 0.85rem; font-weight: 700; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    body.mode-original .card-name  { font-size: 0.78rem; color: rgba(255,255,255,0.88); margin-bottom: 6px; }
+    body.mode-original .card-flag  { font-size: 0.72rem; color: rgba(255,255,255,0.82); margin-bottom: 3px; }
+    body.mode-original .card-title {
+      font-size: 0.83rem; font-weight: 700; color: var(--white);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 2px;
+    }
+    body.mode-original .card-name  { font-size: 0.77rem; color: rgba(255,255,255,0.88); margin-bottom: 7px; }
     body.mode-original .card-tags  { display: flex; gap: 5px; flex-wrap: wrap; }
-    body.mode-original .card-tag   { background: rgba(255,255,255,0.18); color: var(--white); border-radius: 10px; padding: 2px 8px; font-size: 0.68rem; border: none; }
+    body.mode-original .card-tag   {
+      background: rgba(255,255,255,0.18); color: var(--white);
+      border-radius: 10px; padding: 2px 8px; font-size: 0.67rem; border: none;
+    }
+
+    /* Rate badge — BOTTOM RIGHT, overlapping footer */
     body.mode-original .card-rate  {
-      position: absolute; top: 10px; right: 12px; z-index: 4;
-      background: var(--navy); color: var(--white);
-      border-radius: 14px; padding: 3px 9px; font-size: 0.75rem; font-weight: 700;
-      border: none; backdrop-filter: none;
+      position: absolute;
+      /* align to bottom-right of the card */
+      bottom: 12px; right: 10px; z-index: 4;
+      background: rgba(10,20,55,0.85);
+      backdrop-filter: blur(4px);
+      color: var(--white); border-radius: 14px;
+      padding: 3px 9px; font-size: 0.72rem; font-weight: 700;
+      border: none;
     }
 
     /* Original modal */

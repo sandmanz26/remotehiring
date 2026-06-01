@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RemoteRise – Find Top Remote Talent</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0d1b3e;
+      --blue: #1a3a8f;
+      --accent: #1e4fff;
+      --accent-hover: #1740d6;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --bg: #f9fafb;
+      --white: #ffffff;
+      --tag-bg: #f0f4ff;
+      --tag-color: #2a4db8;
+      --green: #16a34a;
+      --yellow: #ca8a04;
+    }
+
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); }
+
+    /* ── NAVBAR ── */
+    nav {
+      background: var(--navy);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 64px; position: sticky; top: 0; z-index: 100;
+    }
+    .logo { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .logo svg { width: 36px; height: 36px; fill: var(--white); }
+    .logo-text { color: var(--white); font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+
+    .search-bar {
+      display: flex; align-items: center;
+      background: var(--white); border-radius: 50px;
+      padding: 0 8px 0 20px; width: 420px; height: 44px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .search-bar input {
+      border: none; outline: none; flex: 1;
+      font-size: 0.95rem; color: var(--text); background: transparent;
+    }
+    .search-bar input::placeholder { color: var(--muted); }
+    .search-btn {
+      background: var(--navy); border: none; border-radius: 50%;
+      width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .search-btn svg { width: 16px; height: 16px; fill: var(--white); }
+
+    .nav-actions { display: flex; align-items: center; gap: 16px; }
+    .btn-signin { color: var(--white); background: none; border: none; cursor: pointer; font-size: 0.95rem; font-weight: 500; }
+    .btn-join {
+      background: var(--white); color: var(--navy); border: 2px solid var(--white);
+      border-radius: 24px; padding: 8px 22px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: background 0.2s, color 0.2s;
+    }
+    .btn-join:hover { background: transparent; color: var(--white); }
+
+    /* ── SKILL CHIPS ── */
+    .chips-bar {
+      background: var(--navy); padding: 0 32px 14px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .chip {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.12); color: var(--white);
+      border-radius: 20px; padding: 6px 14px; font-size: 0.82rem; font-weight: 500;
+      cursor: pointer; transition: background 0.2s; user-select: none;
+    }
+    .chip:hover { background: rgba(255,255,255,0.2); }
+    .chip.add-chip { background: var(--accent); }
+    .chip.add-chip:hover { background: var(--accent-hover); }
+    .chip .remove { font-size: 0.9rem; opacity: 0.8; }
+    .see-more {
+      color: var(--white); background: none; border: none; cursor: pointer;
+      font-size: 0.85rem; font-weight: 500; display: flex; align-items: center; gap: 4px;
+    }
+
+    /* ── TOOLBAR ── */
+    .toolbar {
+      background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 12px 32px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .result-count { font-size: 0.9rem; color: var(--text); font-weight: 500; }
+    .toolbar-right { display: flex; align-items: center; gap: 16px; }
+    .view-label { font-size: 0.85rem; color: var(--muted); }
+    .view-select {
+      display: flex; align-items: center; gap: 4px;
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 5px 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; background: var(--white);
+    }
+    .btn-filters {
+      display: flex; align-items: center; gap: 6px;
+      background: none; border: none; color: var(--accent); font-size: 0.88rem;
+      font-weight: 600; cursor: pointer;
+    }
+
+    /* ── GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 18px; padding: 24px 32px;
+    }
+
+    .card {
+      background: var(--white); border-radius: 14px; overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      cursor: pointer; transition: transform 0.18s, box-shadow 0.18s;
+      position: relative;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.13); }
+
+    .card-img {
+      width: 100%; aspect-ratio: 3/4; object-fit: cover;
+      display: block; background: #d1d5db;
+    }
+    .card-img.placeholder {
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; color: #9ca3af;
+    }
+
+    .card-footer {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.3) 70%, transparent 100%);
+      padding: 32px 12px 12px;
+    }
+    .card-flag { font-size: 0.75rem; color: rgba(255,255,255,0.85); margin-bottom: 3px; }
+    .card-title { font-size: 0.85rem; font-weight: 700; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-name  { font-size: 0.78rem; color: rgba(255,255,255,0.88); margin-bottom: 6px; }
+    .card-tags  { display: flex; gap: 5px; flex-wrap: wrap; }
+    .card-tag {
+      background: rgba(255,255,255,0.18); color: var(--white);
+      border-radius: 10px; padding: 2px 8px; font-size: 0.68rem;
+    }
+    .card-rate {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--navy); color: var(--white);
+      border-radius: 14px; padding: 3px 9px; font-size: 0.75rem; font-weight: 700;
+    }
+
+    /* ── MODAL ── */
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 200;
+      align-items: center; justify-content: center;
+    }
+    .overlay.open { display: flex; }
+
+    .modal {
+      background: var(--white); border-radius: 18px;
+      width: min(860px, 95vw); max-height: 90vh; overflow: hidden;
+      display: flex; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: fadeUp 0.22s ease;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+
+    .modal-photo {
+      width: 42%; min-height: 420px; background: #c4b5a0;
+      object-fit: cover; flex-shrink: 0;
+    }
+    .modal-photo.placeholder-photo {
+      display: flex; align-items: center; justify-content: center; font-size: 6rem; color: #9ca3af;
+    }
+
+    .modal-body { flex: 1; padding: 32px 28px; overflow-y: auto; position: relative; }
+
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: var(--border); border: none; border-radius: 50%;
+      width: 32px; height: 32px; font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; line-height: 1;
+    }
+    .modal-close:hover { background: #d1d5db; }
+
+    .modal-job { font-size: 1.35rem; font-weight: 800; color: var(--text); margin-bottom: 14px; }
+
+    .modal-profile { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .modal-avatar {
+      width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
+      background: #d1d5db; flex-shrink: 0;
+    }
+    .modal-avatar.placeholder-avatar {
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .modal-info-name { font-weight: 700; color: var(--text); }
+    .modal-info-loc  { font-size: 0.82rem; color: var(--muted); margin-top: 1px; }
+
+    .ai-badge {
+      margin-left: auto; background: var(--yellow); color: var(--white);
+      border-radius: 10px; padding: 3px 10px; font-size: 0.75rem; font-weight: 700;
+    }
+
+    .modal-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .modal-tag {
+      background: var(--tag-bg); color: var(--tag-color);
+      border-radius: 14px; padding: 4px 12px; font-size: 0.8rem; font-weight: 500;
+    }
+
+    .rates { display: flex; gap: 0; margin-bottom: 20px; }
+    .rate-box {
+      flex: 1; text-align: center; padding: 12px 0;
+      border: 1px solid var(--border);
+    }
+    .rate-box:first-child { border-radius: 10px 0 0 10px; }
+    .rate-box:last-child  { border-radius: 0 10px 10px 0; border-left: none; }
+    .rate-val  { font-size: 1.4rem; font-weight: 800; color: var(--green); }
+    .rate-val.dash { color: var(--muted); }
+    .rate-label{ font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+    .bio-label { font-size: 0.85rem; font-weight: 700; margin-bottom: 6px; }
+    .bio-text  { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+    .modal-actions { display: flex; gap: 12px; margin-top: 28px; }
+    .btn-msg {
+      flex: 1; background: var(--accent); color: var(--white); border: 2px solid var(--accent);
+      border-radius: 30px; padding: 13px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .btn-msg:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .btn-view {
+      flex: 1; background: var(--white); color: var(--accent); border: 2px solid var(--accent);
+      border-radius: 30px; padding: 13px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: background 0.2s, color 0.2s;
+    }
+    .btn-view:hover { background: var(--accent); color: var(--white); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .search-bar { width: 200px; }
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; }
+      .modal { flex-direction: column; }
+      .modal-photo { width: 100%; min-height: 240px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="logo">
+    <svg viewBox="0 0 40 40"><text y="30" font-size="28" font-weight="900">RR</text></svg>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search for Candidates" oninput="filterCards()" />
+    <button class="search-btn" onclick="filterCards()">
+      <svg viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <div class="nav-actions">
+    <button class="btn-signin">Sign In</button>
+    <button class="btn-join">Join</button>
+  </div>
+</nav>
+
+<!-- SKILL CHIPS -->
+<div class="chips-bar" id="chipsBar">
+  <div class="chip add-chip" onclick="addSkill()">
+    <span>+ Add skills</span>
+  </div>
+  <div class="chip" data-skill="Virtual Assistant">Virtual Assistant <span class="remove" onclick="removeChip(this,event)">✕</span></div>
+  <div class="chip" data-skill="Appointment Setter">Appointment Setter <span class="remove" onclick="removeChip(this,event)">✕</span></div>
+  <div class="chip" data-skill="Lead Generation">Lead Generation <span class="remove" onclick="removeChip(this,event)">✕</span></div>
+  <div class="chip" data-skill="Software Engineering">Software Engineering <span class="remove" onclick="removeChip(this,event)">✕</span></div>
+  <button class="see-more" onclick="toggleMore()">See more ▾</button>
+</div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <span class="result-count" id="resultCount">1,000+ candidates found</span>
+  <div class="toolbar-right">
+    <span class="view-label">View</span>
+    <div class="view-select">40 <span>▾</span></div>
+    <span class="view-label">Results per page</span>
+    <button class="btn-filters">All Filters ›</button>
+  </div>
+</div>
+
+<!-- CARD GRID -->
+<div class="grid" id="cardGrid"></div>
+
+<!-- MODAL OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-photo placeholder-photo" id="modalPhoto">👤</div>
+    <div class="modal-body">
+      <button class="modal-close" onclick="closeModalBtn()">✕</button>
+      <div class="modal-job" id="modalJob"></div>
+
+      <div class="modal-profile">
+        <div class="modal-avatar placeholder-avatar" id="modalAvatar">👤</div>
+        <div>
+          <div class="modal-info-name" id="modalName"></div>
+          <div class="modal-info-loc" id="modalLoc"></div>
+        </div>
+        <div class="ai-badge">AI Score: ⚡</div>
+      </div>
+
+      <div class="modal-tags" id="modalTags"></div>
+
+      <div class="rates">
+        <div class="rate-box">
+          <div class="rate-val" id="modalRate"></div>
+          <div class="rate-label">Hourly rate</div>
+        </div>
+        <div class="rate-box">
+          <div class="rate-val dash" id="modalAnnual">--</div>
+          <div class="rate-label">Annual rate</div>
+        </div>
+      </div>
+
+      <div class="bio-label">My bio</div>
+      <div class="bio-text" id="modalBio"></div>
+
+      <div class="modal-actions">
+        <button class="btn-msg">Message</button>
+        <button class="btn-view">View profile</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const FLAG = { "USA":"🇺🇸","Philippines":"🇵🇭","South Africa":"🇿🇦","Ethiopia":"🇪🇹","Colombia":"🇨🇴","Kenya":"🇰🇪","Nigeria":"🇳🇬","India":"🇮🇳","Indonesia":"🇮🇩","Pakistan":"🇵🇰","Brazil":"🇧🇷","Mexico":"🇲🇽","Venezuela":"🇻🇪","Egypt":"🇪🇬","Ghana":"🇬🇭","Bangladesh":"🇧🇩" };
+
+  const CANDIDATES = [
+    { id:1,  job:"Cold Calling and Sales Specialist",      name:"Sawyer Davis",        country:"USA",          rate:"$-",  annual:"--",  skills:["Sales","Salesforce"],                                bio:"Experienced cold caller with a proven track record in B2B sales and CRM management.",                    emoji:"🤵" },
+    { id:2,  job:"Sales Development Representative",       name:"Noluthando Zuma",     country:"South Africa", rate:"$14", annual:"--",  skills:["Sales","Appointment Setter","Salesforce"],          bio:"Appointment setter and Sales development Representative with 3 years of experience.",                   emoji:"👩🏿" },
+    { id:3,  job:"Precision Appointment Setting Specialist",name:"Kylah Ignacio",      country:"Philippines",  rate:"$7",  annual:"--",  skills:["Appointment Setter","Client Relations"],             bio:"Dedicated appointment setter with excellent communication skills and a client-first approach.",         emoji:"👩🏽" },
+    { id:4,  job:"Expert Sales and Client Relations Manager",name:"Adela Ledezma-Rivera",country:"USA",        rate:"$-",  annual:"--",  skills:["Sales","Customer Satisfaction"],                     bio:"Bilingual sales professional skilled in building lasting client relationships.",                        emoji:"👩🏻" },
+    { id:5,  job:"BDR | SDR",                              name:"Ruth",                country:"Ethiopia",     rate:"$5",  annual:"--",  skills:["Lead Generation","Pipeline Management"],             bio:"Business development rep specialising in outbound prospecting and pipeline building.",                  emoji:"👩🏾" },
+    { id:6,  job:"Virtual Executive Assistant",            name:"Amara Osei",          country:"Ghana",        rate:"$8",  annual:"--",  skills:["Virtual Assistant","Calendar Management"],          bio:"Organised and proactive virtual assistant supporting C-suite executives globally.",                     emoji:"👩🏿‍💼" },
+    { id:7,  job:"Lead Generation Expert",                 name:"Sofia Reyes",         country:"Colombia",     rate:"$6",  annual:"--",  skills:["Lead Generation","Email Outreach","CRM"],           bio:"Specialist in outbound lead generation using LinkedIn, email campaigns, and CRM tools.",                emoji:"👩🏽‍💻" },
+    { id:8,  job:"Full Stack Software Engineer",           name:"James Nguyen",        country:"Philippines",  rate:"$18", annual:"$35k",skills:["Software Engineering","React","Node.js"],           bio:"Full-stack developer with 5+ years building scalable web applications.",                               emoji:"👨🏻‍💻" },
+    { id:9,  job:"Social Media & Marketing Manager",       name:"Priya Sharma",        country:"India",        rate:"$9",  annual:"--",  skills:["Marketing","Social Media","Content Creation"],      bio:"Creative digital marketer experienced in growing brand presence across multiple platforms.",             emoji:"👩🏽‍🎨" },
+    { id:10, job:"Customer Success Specialist",            name:"Emmanuel Owusu",      country:"Kenya",        rate:"$7",  annual:"--",  skills:["Customer Success","Onboarding","Support"],          bio:"Dedicated customer success professional focused on reducing churn and driving expansion revenue.",       emoji:"👨🏿‍💼" },
+    { id:11, job:"Data Entry & Admin Specialist",          name:"Maria Santos",        country:"Philippines",  rate:"$5",  annual:"--",  skills:["Data Entry","Admin","Excel"],                       bio:"Fast and accurate data entry specialist with over 4 years of administrative experience.",               emoji:"👩🏽‍💼" },
+    { id:12, job:"SDR – Tech Sales",                       name:"Carlos Mendez",       country:"Mexico",       rate:"$10", annual:"--",  skills:["Sales","Lead Generation","HubSpot"],                bio:"Tech-savvy SDR experienced in SaaS sales cycles and outbound prospecting.",                            emoji:"👨🏽‍💼" },
+    { id:13, job:"Backend Python Developer",               name:"Ahmed Hassan",        country:"Egypt",        rate:"$20", annual:"$40k",skills:["Software Engineering","Python","Django"],           bio:"Backend developer specialising in REST APIs, microservices, and cloud deployments.",                    emoji:"👨🏽‍💻" },
+    { id:14, job:"WordPress & Shopify Developer",          name:"Fatima Al-Rashid",    country:"Pakistan",     rate:"$12", annual:"--",  skills:["Web Development","WordPress","Shopify"],            bio:"E-commerce developer with expertise in custom WordPress and Shopify theme development.",               emoji:"👩🏽‍💻" },
+    { id:15, job:"Outbound Sales Representative",          name:"Ana Lima",            country:"Brazil",       rate:"$8",  annual:"--",  skills:["Sales","Cold Calling","CRM"],                       bio:"Results-driven outbound sales rep with a history of exceeding monthly quotas.",                        emoji:"👩🏽‍💼" },
+    { id:16, job:"HR & Recruitment Specialist",            name:"Blessing Nwosu",      country:"Nigeria",      rate:"$9",  annual:"--",  skills:["HR","Recruitment","Talent Acquisition"],            bio:"HR professional with expertise in end-to-end recruitment for remote-first companies.",                  emoji:"👩🏿‍💼" },
+    { id:17, job:"UI/UX Designer",                         name:"Yuki Tanaka",         country:"Philippines",  rate:"$15", annual:"$28k",skills:["UI/UX","Figma","Prototyping"],                     bio:"Product designer creating clean, user-centred interfaces for mobile and web applications.",             emoji:"👩🏻‍🎨" },
+    { id:18, job:"DevOps & Cloud Engineer",                name:"Ravi Patel",          country:"India",        rate:"$22", annual:"$44k",skills:["DevOps","AWS","Docker","Kubernetes"],               bio:"Cloud engineer automating infrastructure and CI/CD pipelines for high-growth startups.",                emoji:"👨🏽‍💻" },
+    { id:19, job:"Content Writer & SEO Specialist",        name:"Grace Abiodun",       country:"Nigeria",      rate:"$7",  annual:"--",  skills:["Content Writing","SEO","Copywriting"],              bio:"Versatile writer producing SEO-optimised long-form content, blogs, and marketing copy.",               emoji:"👩🏿‍💼" },
+    { id:20, job:"Virtual Assistant – Operations",         name:"Layla Ibrahim",       country:"Egypt",        rate:"$6",  annual:"--",  skills:["Virtual Assistant","Operations","Notion"],          bio:"Operations-focused VA skilled in project coordination, SOP creation, and tool automation.",             emoji:"👩🏽‍💼" },
+    { id:21, job:"Inside Sales Representative",            name:"Miguel Torres",       country:"Venezuela",    rate:"$9",  annual:"--",  skills:["Sales","Inside Sales","Pipedrive"],                 bio:"Tenacious inside sales rep with deep experience in consultative selling for SaaS products.",           emoji:"👨🏽‍💼" },
+    { id:22, job:"iOS & Android Mobile Developer",         name:"Siti Rahayu",         country:"Indonesia",    rate:"$18", annual:"$36k",skills:["Mobile Dev","React Native","Swift"],               bio:"Cross-platform mobile developer delivering polished iOS and Android applications.",                     emoji:"👩🏽‍💻" },
+    { id:23, job:"Email Marketing Specialist",             name:"Aisha Conteh",        country:"Ghana",        rate:"$8",  annual:"--",  skills:["Email Marketing","Klaviyo","Mailchimp"],            bio:"Email marketer driving engagement and revenue through strategic automation sequences.",                 emoji:"👩🏿‍💼" },
+    { id:24, job:"Bookkeeper & Accounting Assistant",      name:"Roberto Santos",      country:"Philippines",  rate:"$10", annual:"--",  skills:["Bookkeeping","QuickBooks","Accounting"],            bio:"Detail-oriented bookkeeper managing accounts payable, receivable, and monthly reconciliations.",        emoji:"👨🏽‍💼" },
+    { id:25, job:"Account Executive – SaaS",               name:"Zara Okonkwo",        country:"Nigeria",      rate:"$12", annual:"$22k",skills:["Sales","Account Executive","Salesforce"],          bio:"High-performing AE closing mid-market SaaS deals through discovery, demo, and negotiation.",           emoji:"👩🏿‍💼" },
+    { id:26, job:"QA Tester & Automation Engineer",        name:"Dani Park",           country:"Philippines",  rate:"$14", annual:"--",  skills:["QA","Selenium","Cypress","Testing"],                bio:"QA engineer building automated test suites that cut regression time by over 70%.",                     emoji:"👨🏽‍💻" },
+    { id:27, job:"Graphic Designer",                       name:"Isabella Cruz",       country:"Colombia",     rate:"$10", annual:"--",  skills:["Graphic Design","Adobe Illustrator","Canva"],       bio:"Creative graphic designer specialising in brand identity, social media assets, and print design.",     emoji:"👩🏽‍🎨" },
+    { id:28, job:"Telemarketer & Appointment Setter",      name:"Samuel Osei",         country:"Ghana",        rate:"$5",  annual:"--",  skills:["Telemarketing","Appointment Setter","Scripts"],     bio:"High-energy telemarketer setting qualified appointments for financial and insurance products.",         emoji:"👨🏿‍💼" },
+    { id:29, job:"Data Analyst",                           name:"Meera Krishnan",      country:"India",        rate:"$16", annual:"$30k",skills:["Data Analysis","Python","Tableau","SQL"],          bio:"Data analyst transforming raw data into actionable business insights using Python and Tableau.",        emoji:"👩🏽‍💻" },
+    { id:30, job:"Bilingual Customer Support Agent",       name:"Luis Vásquez",        country:"Mexico",       rate:"$7",  annual:"--",  skills:["Customer Support","English","Spanish","Zendesk"],  bio:"Bilingual support agent providing fast, empathetic resolutions across email, chat, and phone.",        emoji:"👨🏽‍💼" },
+    { id:31, job:"Project Manager – Remote Teams",         name:"Nadia Rahman",        country:"Bangladesh",   rate:"$13", annual:"--",  skills:["Project Management","Asana","Agile"],               bio:"Certified project manager coordinating distributed teams across multiple time zones.",                  emoji:"👩🏽‍💼" },
+    { id:32, job:"Outbound Appointment Setter",            name:"Tendai Moyo",         country:"South Africa", rate:"$6",  annual:"--",  skills:["Appointment Setter","Outbound","Cold Calling"],     bio:"Persistent appointment setter consistently hitting 40+ qualified bookings per week.",                  emoji:"👨🏿‍💼" },
+    { id:33, job:"React Frontend Developer",               name:"Kim Jae-won",         country:"Philippines",  rate:"$17", annual:"$32k",skills:["React","TypeScript","Tailwind","Frontend"],        bio:"Frontend developer crafting pixel-perfect, performant interfaces with React and TypeScript.",          emoji:"👨🏻‍💻" },
+    { id:34, job:"Social Selling & LinkedIn Outreach",     name:"Chiamaka Eze",        country:"Nigeria",      rate:"$7",  annual:"--",  skills:["LinkedIn","Social Selling","Lead Generation"],     bio:"LinkedIn outreach specialist generating warm leads for B2B companies through personalised messaging.", emoji:"👩🏿‍💼" },
+    { id:35, job:"Technical Support Engineer",             name:"Mark Villanueva",     country:"Philippines",  rate:"$11", annual:"--",  skills:["Technical Support","Linux","Networking","Jira"],   bio:"Tier-2 technical support engineer resolving complex product and infrastructure issues.",               emoji:"👨🏽‍💻" },
+    { id:36, job:"E-commerce VA & Product Lister",         name:"Hana Putri",          country:"Indonesia",    rate:"$5",  annual:"--",  skills:["E-commerce","Amazon","eBay","Product Listing"],    bio:"E-commerce VA experienced in bulk product listing, SEO optimisation, and order management.",          emoji:"👩🏽‍💼" },
+    { id:37, job:"Video Editor & Content Creator",         name:"Kofi Mensah",         country:"Ghana",        rate:"$8",  annual:"--",  skills:["Video Editing","Premiere Pro","YouTube"],          bio:"Video editor producing engaging content for YouTube channels and social media brands.",                emoji:"👨🏿‍🎨" },
+    { id:38, job:"CRM Administrator",                      name:"Patricia Ocampo",     country:"Colombia",     rate:"$10", annual:"--",  skills:["CRM","HubSpot","Salesforce","Admin"],               bio:"CRM admin maintaining clean pipelines, building reports, and training sales teams on best practices.",  emoji:"👩🏽‍💼" },
+    { id:39, job:"Growth Hacker & Digital Marketer",       name:"Tariq Farouk",        country:"Egypt",        rate:"$11", annual:"--",  skills:["Growth Hacking","Facebook Ads","Google Ads"],      bio:"Digital marketer running paid campaigns that consistently deliver 4x+ ROAS.",                         emoji:"👨🏽‍💼" },
+    { id:40, job:"Executive Virtual Assistant",            name:"Joy Okafor",          country:"Nigeria",      rate:"$8",  annual:"--",  skills:["Virtual Assistant","Scheduling","Email Mgmt"],     bio:"Executive VA keeping C-suite inboxes and calendars running like clockwork.",                          emoji:"👩🏿‍💼" },
+  ];
+
+  let activeSkills = ["Virtual Assistant","Appointment Setter","Lead Generation","Software Engineering"];
+
+  function getFlag(country){ return (FLAG[country]||"🌍") + " " + country; }
+
+  function buildGrid(data){
+    const grid = document.getElementById("cardGrid");
+    grid.innerHTML = "";
+    data.forEach(c => {
+      const el = document.createElement("div");
+      el.className = "card";
+      el.onclick = () => openModal(c);
+      el.innerHTML = `
+        <div class="card-img placeholder" style="background:${hashColor(c.id)};font-size:4rem;display:flex;align-items:center;justify-content:center;">${c.emoji}</div>
+        <div class="card-rate">${c.rate}/hr</div>
+        <div class="card-footer">
+          <div class="card-flag">${getFlag(c.country)}</div>
+          <div class="card-title">${c.job}</div>
+          <div class="card-name">${c.name}</div>
+          <div class="card-tags">${c.skills.slice(0,2).map(s=>`<span class="card-tag">${s}</span>`).join("")}</div>
+        </div>`;
+      grid.appendChild(el);
+    });
+    document.getElementById("resultCount").textContent = data.length >= 40 ? "1,000+ candidates found" : `${data.length} candidate${data.length!==1?"s":""} found`;
+  }
+
+  function hashColor(id){
+    const colors=["#b8cce4","#c8e6c9","#ffe0b2","#f8bbd0","#e1bee7","#b2dfdb","#fff9c4","#d7ccc8","#cfd8dc","#dcedc8"];
+    return colors[id % colors.length];
+  }
+
+  function filterCards(){
+    const q = document.getElementById("searchInput").value.toLowerCase();
+    const filtered = CANDIDATES.filter(c =>
+      c.job.toLowerCase().includes(q) ||
+      c.name.toLowerCase().includes(q) ||
+      c.skills.some(s=>s.toLowerCase().includes(q)) ||
+      c.country.toLowerCase().includes(q)
+    );
+    buildGrid(filtered);
+  }
+
+  function openModal(c){
+    document.getElementById("modalJob").textContent    = c.job;
+    document.getElementById("modalName").textContent   = c.name;
+    document.getElementById("modalLoc").textContent    = getFlag(c.country);
+    document.getElementById("modalRate").textContent   = c.rate === "$-" ? "--" : c.rate + "/hr";
+    document.getElementById("modalRate").className     = "rate-val" + (c.rate==="$-"?" dash":"");
+    document.getElementById("modalAnnual").textContent = c.annual;
+    document.getElementById("modalBio").textContent    = c.bio;
+
+    document.getElementById("modalPhoto").innerHTML = `<span style="font-size:8rem">${c.emoji}</span>`;
+    document.getElementById("modalPhoto").style.background = hashColor(c.id);
+
+    document.getElementById("modalAvatar").innerHTML   = c.emoji;
+    document.getElementById("modalAvatar").style.background = hashColor(c.id);
+
+    const tags = document.getElementById("modalTags");
+    tags.innerHTML = c.skills.map(s=>`<span class="modal-tag">${s}</span>`).join("");
+
+    document.getElementById("overlay").classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal(e){ if(e.target===document.getElementById("overlay")) closeModalBtn(); }
+  function closeModalBtn(){ document.getElementById("overlay").classList.remove("open"); document.body.style.overflow=""; }
+
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeModalBtn(); });
+
+  function removeChip(btn, e){
+    e.stopPropagation();
+    const chip = btn.closest(".chip");
+    activeSkills = activeSkills.filter(s=>s!==chip.dataset.skill);
+    chip.remove();
+  }
+
+  function addSkill(){
+    const skill = prompt("Enter a skill to add:");
+    if(!skill || !skill.trim()) return;
+    const s = skill.trim();
+    if(activeSkills.includes(s)) return;
+    activeSkills.push(s);
+    const chipsBar = document.getElementById("chipsBar");
+    const seeMore  = chipsBar.querySelector(".see-more");
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.dataset.skill = s;
+    chip.innerHTML = `${s} <span class="remove" onclick="removeChip(this,event)">✕</span>`;
+    chipsBar.insertBefore(chip, seeMore);
+  }
+
+  function toggleMore(){
+    const btn = document.querySelector(".see-more");
+    btn.textContent = btn.textContent.includes("▾") ? "See less ▴" : "See more ▾";
+  }
+
+  // Initial render
+  buildGrid(CANDIDATES);
+</script>
+</body>
+</html>

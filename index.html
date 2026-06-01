@@ -153,20 +153,20 @@
        MODE: ORIGINAL — pixel-perfect to screenshot 1
     ══════════════════════════════════════════════ */
     body.mode-original .grid {
-      /* 6 columns matching screenshot 1 */
-      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-      gap: 14px; padding: 18px 24px;
+      /* Force exactly 6 columns like screenshot */
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px; padding: 16px 24px;
     }
 
     body.mode-original .card {
-      background: #222; border-radius: 12px; overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      background: #111; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.14);
       cursor: pointer; transition: transform 0.18s, box-shadow 0.18s;
       position: relative; aspect-ratio: unset;
     }
     body.mode-original .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
 
-    /* Static thumbnail photo — aspect ratio 3/4 matches screenshot */
+    /* Photo — fills card, ratio matches screenshot (portrait ~3:4) */
     body.mode-original .card-img {
       width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: top center;
       display: block; background: #d1d5db;
@@ -227,42 +227,52 @@
     body.mode-original .card-ai       { display: none; }
     body.mode-original .card-cta      { display: none; }
 
-    /* Footer overlay — gradient over bottom of photo, exactly like screenshot 1 */
+    /* Footer overlay — dark gradient, content stacked, rate overlaps bottom-right */
     body.mode-original .card-footer {
       position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
       background: linear-gradient(to top,
-        rgba(0,0,0,0.88) 0%,
-        rgba(0,0,0,0.55) 50%,
+        rgba(0,0,0,0.90) 0%,
+        rgba(0,0,0,0.60) 45%,
         transparent 100%);
-      padding: 40px 10px 10px;
+      /* right padding leaves room for rate badge */
+      padding: 44px 8px 10px 10px;
     }
     body.mode-original .card-flag {
-      font-size: 0.68rem; color: rgba(255,255,255,0.80);
+      font-size: 0.65rem; color: rgba(255,255,255,0.75);
       margin-bottom: 3px; display: flex; align-items: center; gap: 3px;
     }
     body.mode-original .card-title {
-      font-size: 0.80rem; font-weight: 700; color: var(--white);
+      font-size: 0.78rem; font-weight: 700; color: var(--white);
+      /* truncate with ellipsis — matches screenshot */
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      margin-bottom: 2px; line-height: 1.2;
+      /* leave right gap for rate badge */
+      padding-right: 52px;
+      margin-bottom: 2px; line-height: 1.25;
     }
     body.mode-original .card-name {
-      font-size: 0.73rem; color: rgba(255,255,255,0.85);
-      margin-bottom: 6px; font-weight: 400;
+      font-size: 0.70rem; color: rgba(255,255,255,0.82);
+      margin-bottom: 7px; font-weight: 400;
+      padding-right: 52px;
     }
-    body.mode-original .card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
-    body.mode-original .card-tag  {
-      background: rgba(30,30,60,0.70); color: var(--white);
-      border-radius: 6px; padding: 2px 7px; font-size: 0.64rem;
-      font-weight: 500; border: none; backdrop-filter: none;
+    body.mode-original .card-tags {
+      display: flex; gap: 4px; flex-wrap: wrap;
+      /* allow tags to reach full width; rate overlaps last row */
+    }
+    body.mode-original .card-tag {
+      background: rgba(20,20,50,0.65); color: rgba(255,255,255,0.92);
+      border-radius: 5px; padding: 2px 6px; font-size: 0.60rem;
+      font-weight: 500; border: none;
     }
 
-    /* Rate badge — bottom-right inside the footer, dark pill */
+    /* Rate badge — absolute bottom-right of the CARD (not footer)
+       Matches screenshot: dark navy pill, same baseline as last tag row */
     body.mode-original .card-rate {
-      position: absolute; bottom: 10px; right: 8px; z-index: 4;
-      background: rgba(10,20,55,0.90);
-      color: var(--white); border-radius: 12px;
-      padding: 3px 8px; font-size: 0.70rem; font-weight: 700;
-      border: none; backdrop-filter: none;
+      position: absolute;
+      bottom: 10px; right: 8px; z-index: 6;
+      background: #0d1b3e;
+      color: var(--white); border-radius: 10px;
+      padding: 3px 8px; font-size: 0.68rem; font-weight: 700;
+      border: none; letter-spacing: 0.2px;
     }
 
     /* Original modal */

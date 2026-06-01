@@ -146,34 +146,92 @@
        MODE: ORIGINAL
     ══════════════════════════════════════════════ */
     body.mode-original .card {
-      background: var(--white); border-radius: 14px; overflow: hidden;
+      background: #111; border-radius: 14px; overflow: hidden;
       box-shadow: 0 1px 4px rgba(0,0,0,0.08);
       cursor: pointer; transition: transform 0.18s, box-shadow 0.18s;
-      position: relative;
+      position: relative; aspect-ratio: 3/4;
     }
-    body.mode-original .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.13); }
+    body.mode-original .card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.18); }
 
+    /* Static thumbnail photo */
     body.mode-original .card-img {
-      width: 100%; aspect-ratio: 3/4; object-fit: cover;
-      display: block; background: #d1d5db; position: static;
+      width: 100%; height: 100%; object-fit: cover;
+      display: block; background: #d1d5db;
+      position: absolute; inset: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1;
     }
+    body.mode-original .card:hover .card-img { opacity: 0; }
+
+    /* Video element — hidden until hover */
+    body.mode-original .card-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0; transition: opacity 0.3s ease;
+      z-index: 2; background: #111;
+    }
+    body.mode-original .card:hover .card-video { opacity: 1; }
+
+    /* Ken Burns fallback when video not available */
+    body.mode-original .card-kb {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      opacity: 0; z-index: 2;
+      transition: opacity 0.3s ease;
+    }
+    body.mode-original .card.kb-active:hover .card-kb { opacity: 1; }
+    body.mode-original .card.kb-active:hover .card-kb {
+      animation: kenBurns 6s ease-out infinite alternate;
+    }
+    @keyframes kenBurns {
+      0%   { transform: scale(1)    translate(0, 0); }
+      100% { transform: scale(1.12) translate(-2%, -2%); }
+    }
+
+    /* REC indicator */
+    body.mode-original .card-rec {
+      position: absolute; top: 10px; left: 12px; z-index: 4;
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(0,0,0,0.50); backdrop-filter: blur(6px);
+      border-radius: 20px; padding: 3px 9px;
+      opacity: 0; transition: opacity 0.25s 0.2s;
+      pointer-events: none;
+    }
+    body.mode-original .card:hover .card-rec { opacity: 1; }
+    body.mode-original .rec-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #f87171;
+      animation: pulse 1.4s infinite;
+    }
+    body.mode-original .rec-label { font-size: 0.65rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+
+    /* Video progress bar at bottom */
+    body.mode-original .card-progress {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 4;
+      height: 3px; background: rgba(255,255,255,0.2);
+      opacity: 0; transition: opacity 0.25s 0.2s;
+    }
+    body.mode-original .card:hover .card-progress { opacity: 1; }
+    body.mode-original .card-progress-fill {
+      height: 100%; background: #fff; width: 0%;
+      transition: none;
+    }
+
     body.mode-original .card-gradient { display: none; }
     body.mode-original .card-ai       { display: none; }
     body.mode-original .card-cta      { display: none; }
 
     body.mode-original .card-footer {
-      position: absolute; bottom: 0; left: 0; right: 0;
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
       background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.3) 70%, transparent 100%);
-      padding: 32px 12px 12px;
+      padding: 32px 12px 14px;
     }
     body.mode-original .card-flag  { font-size: 0.75rem; color: rgba(255,255,255,0.85); margin-bottom: 3px; }
     body.mode-original .card-title { font-size: 0.85rem; font-weight: 700; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    body.mode-original .card-name  { font-size: 0.78rem; color: rgba(255,255,255,0.88); margin-bottom: 6px; order: 2; }
-    body.mode-original .card-footer { display: block; }
+    body.mode-original .card-name  { font-size: 0.78rem; color: rgba(255,255,255,0.88); margin-bottom: 6px; }
     body.mode-original .card-tags  { display: flex; gap: 5px; flex-wrap: wrap; }
     body.mode-original .card-tag   { background: rgba(255,255,255,0.18); color: var(--white); border-radius: 10px; padding: 2px 8px; font-size: 0.68rem; border: none; }
     body.mode-original .card-rate  {
-      position: absolute; top: 12px; right: 12px;
+      position: absolute; top: 10px; right: 12px; z-index: 4;
       background: var(--navy); color: var(--white);
       border-radius: 14px; padding: 3px 9px; font-size: 0.75rem; font-weight: 700;
       border: none; backdrop-filter: none;
@@ -690,6 +748,20 @@
   let currentMode = 'original';
   let activeSkills = ["Virtual Assistant","Appointment Setter","Lead Generation","Software Engineering"];
 
+  // Free stock portrait videos (Pexels CDN — no API key needed for direct MP4 links)
+  const VIDEOS = [
+    "https://videos.pexels.com/video-files/3195394/3195394-uhd_1440_2560_25fps.mp4",
+    "https://videos.pexels.com/video-files/3254201/3254201-uhd_1440_2560_24fps.mp4",
+    "https://videos.pexels.com/video-files/3209828/3209828-uhd_2560_1440_25fps.mp4",
+    "https://videos.pexels.com/video-files/5752729/5752729-uhd_1440_2560_25fps.mp4",
+    "https://videos.pexels.com/video-files/5207006/5207006-uhd_1440_2560_25fps.mp4",
+    "https://videos.pexels.com/video-files/3194160/3194160-uhd_1440_2560_25fps.mp4",
+    "https://videos.pexels.com/video-files/3253282/3253282-uhd_1440_2560_25fps.mp4",
+    "https://videos.pexels.com/video-files/4571360/4571360-hd_1080_1920_25fps.mp4",
+    "https://videos.pexels.com/video-files/5076397/5076397-hd_1080_1920_25fps.mp4",
+    "https://videos.pexels.com/video-files/4016131/4016131-hd_1080_1920_25fps.mp4",
+  ];
+
   function getFlag(c){ return (FLAG[c]||"🌍")+" "+c; }
   function hashColor(id){
     return ["#b8cce4","#c8e6c9","#ffe0b2","#f8bbd0","#e1bee7","#b2dfdb","#fff9c4","#d7ccc8","#cfd8dc","#dcedc8"][id%10];
@@ -720,8 +792,13 @@
       el.onclick = () => openModal(c, aiScore);
 
       if(currentMode === 'original'){
+        const vid = VIDEOS[c.id % VIDEOS.length];
         el.innerHTML = `
-          <img class="card-img" src="${c.photo}" alt="${c.name}" onerror="this.style.display='none'" />
+          <img  class="card-img" src="${c.photo}" alt="${c.name}" onerror="this.style.display='none'" />
+          <video class="card-video" src="${vid}" muted playsinline loop preload="none"></video>
+          <div class="card-kb" style="background-image:url('${c.photo}')"></div>
+          <div class="card-rec"><span class="rec-dot"></span><span class="rec-label">REC</span></div>
+          <div class="card-progress"><div class="card-progress-fill"></div></div>
           <div class="card-rate">${c.rate}/hr</div>
           <div class="card-footer">
             <div class="card-flag">${getFlag(c.country)}</div>
@@ -729,6 +806,40 @@
             <div class="card-name">${c.name}</div>
             <div class="card-tags">${c.skills.slice(0,2).map(s=>`<span class="card-tag">${s}</span>`).join("")}</div>
           </div>`;
+
+        // Hover: play video, fallback to Ken Burns
+        el.addEventListener('mouseenter', () => {
+          const video = el.querySelector('.card-video');
+          const fill  = el.querySelector('.card-progress-fill');
+          let rafId;
+
+          video.play().then(() => {
+            // Animate progress bar in sync with video
+            function tick(){
+              if(video.duration){
+                fill.style.transition = 'none';
+                fill.style.width = (video.currentTime / video.duration * 100) + '%';
+              }
+              rafId = requestAnimationFrame(tick);
+            }
+            rafId = requestAnimationFrame(tick);
+            el._rafId = rafId;
+          }).catch(() => {
+            // Video failed — activate Ken Burns on the kb div
+            el.classList.add('kb-active');
+          });
+        });
+
+        el.addEventListener('mouseleave', () => {
+          const video = el.querySelector('.card-video');
+          const fill  = el.querySelector('.card-progress-fill');
+          video.pause();
+          video.currentTime = 0;
+          fill.style.width = '0%';
+          if(el._rafId) cancelAnimationFrame(el._rafId);
+          el.classList.remove('kb-active');
+        });
+
       } else {
         el.innerHTML = `
           <img class="card-img" src="${c.photo}" alt="${c.name}" onerror="this.style.display='none'" />

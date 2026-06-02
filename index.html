@@ -820,44 +820,58 @@
 
     /* Card content */
     .rv-content {
-      padding: 13px 15px 15px;
-      display: flex; flex-direction: column; gap: 7px;
+      padding: 14px 16px 12px;
+      display: flex; flex-direction: column; gap: 9px;
     }
     .rv-title {
-      font-size: 0.875rem; font-weight: 700; color: #111;
-      line-height: 1.35;
+      font-size: 1rem; font-weight: 700; color: #111;
+      line-height: 1.3;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    .rv-desc {
-      font-size: 0.75rem; color: #6b7280; line-height: 1.55;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .rv-meta {
-      display: flex; align-items: center; justify-content: space-between; gap: 8px;
-      margin-top: 1px;
-    }
-    .rv-person { display: flex; align-items: center; gap: 7px; min-width: 0; }
-    .rv-avatar {
-      width: 26px; height: 26px; border-radius: 50%;
-      object-fit: cover; object-position: top; flex-shrink: 0;
-      border: 1.5px solid #e5e7eb; background: #e4e4e7;
+    .rv-name-rate {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
     }
     .rv-name {
-      font-size: 0.75rem; font-weight: 500; color: #374151;
+      font-size: 0.85rem; font-weight: 400; color: #6b7280;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .rv-rate {
-      font-size: 0.75rem; font-weight: 700; color: #16a34a;
+      font-size: 0.85rem; font-weight: 700; color: #16a34a;
       white-space: nowrap; flex-shrink: 0;
     }
-    .rv-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .rv-desc {
+      font-size: 0.78rem; color: #6b7280; line-height: 1.55;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .rv-tags { display: flex; gap: 6px; flex-wrap: wrap; }
     .rv-tag {
       background: #f3f4f6; color: #374151;
       border: 1px solid #e5e7eb; border-radius: 20px;
-      padding: 3px 10px; font-size: 0.69rem; font-weight: 500;
+      padding: 4px 12px; font-size: 0.72rem; font-weight: 500;
     }
+
+    /* Card footer: lang + exp */
+    .rv-card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 16px 14px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .rv-footer-left { display: flex; align-items: center; gap: 6px; }
+    .rv-footer-globe { width: 16px; height: 16px; color: #9ca3af; flex-shrink: 0; }
+    .rv-lang-chip {
+      background: #f3f4f6; color: #374151;
+      border: 1px solid #e5e7eb; border-radius: 20px;
+      padding: 3px 10px; font-size: 0.72rem; font-weight: 500;
+    }
+    .rv-exp-chip {
+      display: flex; align-items: center; gap: 5px;
+      background: #f3f4f6; color: #374151;
+      border: 1px solid #e5e7eb; border-radius: 20px;
+      padding: 4px 12px; font-size: 0.72rem; font-weight: 500;
+    }
+    .rv-exp-chip svg { width: 12px; height: 12px; color: #6b7280; flex-shrink: 0; }
 
     /* ── SHARED MODAL FRAME ── */
     .overlay {
@@ -1280,7 +1294,7 @@
   <div class="logo">RR</div>
 
   <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search for Candidates" oninput="filterCards()" />
+    <input type="text" id="searchInput" placeholder="Search candidates — use AND for multiple terms" oninput="filterCards()" />
     <button class="search-btn" onclick="filterCards()">
       <svg viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
       <span>Search</span>
@@ -1817,6 +1831,10 @@
         const vid = VIDEOS[c.id % VIDEOS.length];
         const flagStr = (FLAG[c.country] || '🌍') + ' ' + c.country;
         const skillChips = c.skills.slice(0, 3).map(s => `<span class="rv-tag">${s}</span>`).join('');
+        const langs = c.langs || ['English'];
+        const langChipHtml = langs.length > 1
+          ? `<span class="rv-lang-chip">${langs[0]}</span><span class="chip-tooltip"><span class="rv-lang-chip">+${langs.length-1}</span><span class="tooltip-box">${langs.slice(1).join(', ')}</span></span>`
+          : `<span class="rv-lang-chip">${langs[0]}</span>`;
         el.innerHTML = `
           <div class="rv-media rv-${orient}">
             <img src="${c.photo}" alt="${c.name}" onerror="this.style.opacity=0" />
@@ -1830,15 +1848,22 @@
           </div>
           <div class="rv-content">
             <div class="rv-title">${c.job}</div>
-            <div class="rv-desc">${c.bio}</div>
-            <div class="rv-meta">
-              <div class="rv-person">
-                <img class="rv-avatar" src="${c.photo}" alt="${c.name}" onerror="this.style.opacity=0" />
-                <span class="rv-name">${c.name}</span>
-              </div>
+            <div class="rv-name-rate">
+              <span class="rv-name">${c.name}</span>
               <span class="rv-rate">${c.rate === '$-' ? 'Negotiable' : c.rate + '/h'}</span>
             </div>
+            <div class="rv-desc">${c.bio}</div>
             <div class="rv-tags">${skillChips}</div>
+          </div>
+          <div class="rv-card-footer">
+            <div class="rv-footer-left">
+              <svg class="rv-footer-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              ${langChipHtml}
+            </div>
+            <span class="rv-exp-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              ${c.exp} yrs
+            </span>
           </div>`;
 
         el.addEventListener('mouseenter', () => {
@@ -2138,10 +2163,19 @@
   });
 
   function filterCards(){
-    const q = document.getElementById("searchInput").value.toLowerCase();
+    const raw = document.getElementById("searchInput").value.trim();
+    if (!raw) { buildGrid(CANDIDATES); return; }
+    // Support AND syntax: "UX Engineer AND design system AND Python"
+    const terms = raw.toLowerCase().split(/\s+AND\s+|\s+and\s+/).map(t => t.trim()).filter(Boolean);
     buildGrid(CANDIDATES.filter(c =>
-      c.job.toLowerCase().includes(q) || c.name.toLowerCase().includes(q) ||
-      c.skills.some(s=>s.toLowerCase().includes(q)) || c.country.toLowerCase().includes(q)
+      terms.every(term =>
+        c.job.toLowerCase().includes(term) ||
+        c.name.toLowerCase().includes(term) ||
+        c.skills.some(s => s.toLowerCase().includes(term)) ||
+        c.country.toLowerCase().includes(term) ||
+        (c.langs || []).some(l => l.toLowerCase().includes(term)) ||
+        c.bio.toLowerCase().includes(term)
+      )
     ));
   }
 

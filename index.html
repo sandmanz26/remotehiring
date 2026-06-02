@@ -451,6 +451,26 @@
     .rd-pill-option:hover { background: #f3f4f6; }
     .rd-pill-option.rd-pill-selected { background: #f3f4f6; font-weight: 600; color: #111; }
 
+    /* AND keyword search in filter bar */
+    .rd-keyword-wrap {
+      display: flex; align-items: center; gap: 7px;
+      border: 1.5px solid #e5e7eb; background: #fff;
+      border-radius: 20px; padding: 7px 14px;
+      transition: border-color 0.15s;
+      min-width: 220px;
+    }
+    .rd-keyword-wrap:focus-within { border-color: #111; background: #f9fafb; }
+    .rd-keyword-wrap.has-value { border-color: #111; background: #111; }
+    .rd-keyword-wrap.has-value .rd-kw-icon { color: rgba(255,255,255,0.6); }
+    .rd-kw-icon { width: 13px; height: 13px; color: #9ca3af; flex-shrink: 0; }
+    .rd-keyword-input {
+      border: none; outline: none; background: transparent;
+      font-size: 0.80rem; color: #374151; flex: 1; min-width: 0;
+    }
+    .rd-keyword-wrap.has-value .rd-keyword-input { color: #fff; }
+    .rd-keyword-input::placeholder { color: #9ca3af; font-size: 0.78rem; }
+    .rd-keyword-wrap.has-value .rd-keyword-input::placeholder { color: rgba(255,255,255,0.45); }
+
     /* Card title tooltip */
     body.mode-redesign .card-title[data-overflow="true"] {
       cursor: default;
@@ -1293,7 +1313,7 @@
   <div class="logo">RR</div>
 
   <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Search candidates — use AND for multiple terms" oninput="filterCards()" />
+    <input type="text" id="searchInput" placeholder="Search for Candidates" oninput="filterCards()" />
     <button class="search-btn" onclick="filterCards()">
       <svg viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
       <span>Search</span>
@@ -1409,6 +1429,14 @@
         <div class="rd-pill-option" data-val="3-4" onclick="selectFilter('fpExp','filterExp','3–4 yrs','3-4')">3 – 4 yrs</div>
         <div class="rd-pill-option" data-val="5+"  onclick="selectFilter('fpExp','filterExp','5+ yrs','5+')">5+ yrs</div>
       </div>
+    </div>
+
+    <!-- AND keyword search -->
+    <div class="rd-keyword-wrap" id="rdKeywordWrap">
+      <svg class="rd-kw-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
+      <input class="rd-keyword-input" id="filterKeyword" type="text"
+             placeholder="keyword AND keyword AND …"
+             oninput="onKeywordInput()" />
     </div>
 
     <!-- hidden inputs for JS compat -->
@@ -1764,11 +1792,20 @@
     }
   });
 
+  function onKeywordInput() {
+    const val = document.getElementById('filterKeyword').value;
+    const wrap = document.getElementById('rdKeywordWrap');
+    wrap.classList.toggle('has-value', val.trim() !== '');
+    applyRdFilters();
+  }
+
   function applyRdFilters() {
-    const cat  = document.getElementById('filterCategory').value.toLowerCase();
-    const loc  = document.getElementById('filterLocation').value.toLowerCase();
-    const rate = document.getElementById('filterRate').value;
-    const exp  = document.getElementById('filterExp').value;
+    const cat     = document.getElementById('filterCategory').value.toLowerCase();
+    const loc     = document.getElementById('filterLocation').value.toLowerCase();
+    const rate    = document.getElementById('filterRate').value;
+    const exp     = document.getElementById('filterExp').value;
+    const kwRaw   = document.getElementById('filterKeyword').value.trim();
+    const kwTerms = kwRaw ? kwRaw.toLowerCase().split(/\s+and\s+/i).map(t => t.trim()).filter(Boolean) : [];
 
     const filtered = CANDIDATES.filter(c => {
       if (cat && !c.job.toLowerCase().includes(cat) && !c.skills.some(s => s.toLowerCase().includes(cat))) return false;
@@ -1785,10 +1822,17 @@
         if (exp === '3-4' && !(c.exp >= 3 && c.exp <= 4)) return false;
         if (exp === '5+'  && !(c.exp >= 5)) return false;
       }
+      if (kwTerms.length) {
+        const matchesTerm = t =>
+          c.job.toLowerCase().includes(t) || c.name.toLowerCase().includes(t) ||
+          c.skills.some(s => s.toLowerCase().includes(t)) || c.bio.toLowerCase().includes(t) ||
+          c.country.toLowerCase().includes(t) || (c.langs||[]).some(l => l.toLowerCase().includes(t));
+        if (!kwTerms.every(matchesTerm)) return false;
+      }
       return true;
     });
 
-    const hasFilter = cat || loc || rate || exp;
+    const hasFilter = cat || loc || rate || exp || kwRaw;
     document.getElementById('rdClearBtn').style.display = hasFilter ? 'block' : 'none';
     buildGrid(filtered);
     document.getElementById('rdResultCount').textContent =
@@ -1804,6 +1848,8 @@
       p.classList.remove('has-value');
       p.querySelectorAll('.rd-pill-option').forEach((o,i) => o.classList.toggle('rd-pill-selected', i === 0));
     });
+    document.getElementById('filterKeyword').value = '';
+    document.getElementById('rdKeywordWrap').classList.remove('has-value');
     document.getElementById('rdClearBtn').style.display = 'none';
     buildGrid(CANDIDATES);
     document.getElementById('rdResultCount').textContent = '1,000+ candidates found';
@@ -2172,19 +2218,11 @@
   });
 
   function filterCards(){
-    const raw = document.getElementById("searchInput").value.trim();
-    if (!raw) { buildGrid(CANDIDATES); return; }
-    // Support AND syntax: "UX Engineer AND design system AND Python"
-    const terms = raw.toLowerCase().split(/\s+AND\s+|\s+and\s+/).map(t => t.trim()).filter(Boolean);
+    const q = document.getElementById("searchInput").value.toLowerCase().trim();
+    if (!q) { buildGrid(CANDIDATES); return; }
     buildGrid(CANDIDATES.filter(c =>
-      terms.every(term =>
-        c.job.toLowerCase().includes(term) ||
-        c.name.toLowerCase().includes(term) ||
-        c.skills.some(s => s.toLowerCase().includes(term)) ||
-        c.country.toLowerCase().includes(term) ||
-        (c.langs || []).some(l => l.toLowerCase().includes(term)) ||
-        c.bio.toLowerCase().includes(term)
-      )
+      c.job.toLowerCase().includes(q) || c.name.toLowerCase().includes(q) ||
+      c.skills.some(s => s.toLowerCase().includes(q)) || c.country.toLowerCase().includes(q)
     ));
   }
 

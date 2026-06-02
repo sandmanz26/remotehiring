@@ -32,30 +32,40 @@
       padding: 0 32px; height: 66px;
       position: sticky; top: 0; z-index: 100;
     }
+
+    /* Logo — bold RR mark */
     .logo {
       cursor: pointer; flex-shrink: 0;
-      color: var(--white); font-size: 1.6rem; font-weight: 900;
-      letter-spacing: -1.5px; margin-right: 0;
+      color: var(--white); font-size: 1.55rem; font-weight: 900;
+      letter-spacing: -1.5px;
     }
-    /* Search bar — fixed width, centered with auto margins */
+
+    /* Search bar — wide, centered with auto margins, rounded pill */
     .search-bar {
       display: flex; align-items: center;
       background: var(--white); border-radius: 50px;
-      padding: 0 6px 0 20px; height: 44px;
-      width: 400px; flex-shrink: 0;
+      padding: 4px 4px 4px 22px; height: 48px;
+      width: 520px; flex-shrink: 0;
       margin: 0 auto;
     }
     .search-bar input {
       border: none; outline: none; flex: 1;
-      font-size: 0.96rem; color: var(--text); background: transparent;
+      font-size: 0.95rem; color: var(--text); background: transparent;
     }
     .search-bar input::placeholder { color: #9ca3af; }
+
+    /* "🔍 Search" pill button — matches screenshot exactly */
     .search-btn {
-      background: #0d1b3e; border: none; border-radius: 50%;
-      width: 34px; height: 34px; min-width: 34px;
-      display: flex; align-items: center; justify-content: center; cursor: pointer;
+      background: #0d1b3e; border: none; border-radius: 50px;
+      height: 40px; padding: 0 18px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 7px; cursor: pointer; flex-shrink: 0;
     }
-    .search-btn svg { width: 15px; height: 15px; }
+    .search-btn svg  { width: 16px; height: 16px; flex-shrink: 0; }
+    .search-btn span {
+      color: var(--white); font-size: 0.88rem; font-weight: 600;
+      white-space: nowrap;
+    }
 
     /* ── VERSION SWITCHER — matches screenshot 1 ── */
     .switcher {
@@ -150,61 +160,71 @@
     }
 
     /* ══════════════════════════════════════════════
-       MODE: ORIGINAL — pixel-perfect to screenshot 1
+       MODE: ORIGINAL — exact match to screenshot
     ══════════════════════════════════════════════ */
+
+    /* ── Grid: 5 columns, 12px gap ── */
     body.mode-original .grid {
-      /* Force exactly 6 columns like screenshot */
-      grid-template-columns: repeat(6, 1fr);
-      gap: 12px; padding: 16px 24px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px; padding: 20px 28px;
     }
 
+    /* ── Card ── */
     body.mode-original .card {
-      background: #111; border-radius: 10px; overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.14);
-      cursor: pointer; transition: transform 0.18s, box-shadow 0.18s;
-      position: relative; aspect-ratio: unset;
+      position: relative; overflow: hidden;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #1a1a1a;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      /* No aspect-ratio here — let the photo drive the height */
     }
-    body.mode-original .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+    body.mode-original .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.22);
+    }
 
-    /* Photo — fills card, ratio matches screenshot (portrait ~3:4) */
+    /* ── Photo: portrait 3/4, object-position top ── */
     body.mode-original .card-img {
-      width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: top center;
-      display: block; background: #d1d5db;
+      display: block; width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      object-position: top center;
       position: relative; z-index: 1;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.28s ease;
+      background: #2a2a2a;
     }
     body.mode-original .card:hover .card-img { opacity: 0; }
 
-    /* Video — covers exactly same area as photo */
+    /* ── Video (hover) ── */
     body.mode-original .card-video {
-      position: absolute; top: 0; left: 0; right: 0;
-      aspect-ratio: 3/4; width: 100%; object-fit: cover;
-      opacity: 0; transition: opacity 0.3s ease;
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0; transition: opacity 0.28s ease;
       z-index: 2; background: #111;
     }
     body.mode-original .card:hover .card-video { opacity: 1; }
 
-    /* Ken Burns fallback */
+    /* ── Ken Burns fallback ── */
     body.mode-original .card-kb {
-      position: absolute; top: 0; left: 0; right: 0;
-      aspect-ratio: 3/4; background-size: cover; background-position: center top;
-      opacity: 0; z-index: 2; transition: opacity 0.3s ease;
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center top;
+      opacity: 0; z-index: 2;
+      transition: opacity 0.28s ease;
     }
     body.mode-original .card.kb-active:hover .card-kb {
-      opacity: 1; animation: kenBurns 6s ease-out infinite alternate;
-    }
-    @keyframes kenBurns {
-      0%   { transform: scale(1)    translate(0, 0); }
-      100% { transform: scale(1.10) translate(-2%, -2%); }
+      opacity: 1;
+      animation: kenBurns 7s ease-out infinite alternate;
     }
 
-    /* REC indicator */
+    /* ── REC badge (hover) ── */
     body.mode-original .card-rec {
-      position: absolute; top: 10px; left: 12px; z-index: 5;
+      position: absolute; top: 10px; left: 10px; z-index: 5;
       display: flex; align-items: center; gap: 5px;
-      background: rgba(0,0,0,0.50); backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.52); backdrop-filter: blur(6px);
       border-radius: 20px; padding: 3px 9px;
-      opacity: 0; transition: opacity 0.25s 0.2s;
+      opacity: 0; transition: opacity 0.22s 0.18s;
       pointer-events: none;
     }
     body.mode-original .card:hover .card-rec { opacity: 1; }
@@ -212,69 +232,81 @@
       width: 7px; height: 7px; border-radius: 50%; background: #f87171;
       animation: pulse 1.4s infinite;
     }
-    body.mode-original .rec-label { font-size: 0.65rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+    body.mode-original .rec-label { font-size: 0.62rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
 
-    /* Video progress bar */
+    /* ── Video progress bar (hover) ── */
     body.mode-original .card-progress {
-      position: absolute; bottom: 0; left: 0; right: 0; z-index: 5;
-      height: 3px; background: rgba(255,255,255,0.2);
-      opacity: 0; transition: opacity 0.25s 0.2s;
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 6;
+      height: 3px; background: rgba(255,255,255,0.18);
+      opacity: 0; transition: opacity 0.22s 0.18s;
     }
     body.mode-original .card:hover .card-progress { opacity: 1; }
     body.mode-original .card-progress-fill { height: 100%; background: #fff; width: 0%; }
 
+    /* ── Hide redesign-only elements ── */
     body.mode-original .card-gradient { display: none; }
     body.mode-original .card-ai       { display: none; }
     body.mode-original .card-cta      { display: none; }
 
-    /* Footer overlay — dark gradient, content stacked, rate overlaps bottom-right */
+    /* ── Footer overlay: absolute, covers bottom of photo ── */
     body.mode-original .card-footer {
-      position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;
-      background: linear-gradient(to top,
-        rgba(0,0,0,0.90) 0%,
-        rgba(0,0,0,0.60) 45%,
-        transparent 100%);
-      /* right padding leaves room for rate badge */
-      padding: 44px 8px 10px 10px;
+      position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+      padding: 56px 10px 10px 10px;
+      background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.92)  0%,
+        rgba(0,0,0,0.65)  40%,
+        rgba(0,0,0,0.10)  75%,
+        transparent       100%
+      );
     }
+
+    /* Flag + country name — top of footer text */
     body.mode-original .card-flag {
-      font-size: 0.65rem; color: rgba(255,255,255,0.75);
-      margin-bottom: 3px; display: flex; align-items: center; gap: 3px;
+      display: flex; align-items: center; gap: 4px;
+      font-size: 0.66rem; color: rgba(255,255,255,0.78);
+      margin-bottom: 3px;
     }
+
+    /* Job title — truncated, bold, white */
     body.mode-original .card-title {
-      font-size: 0.78rem; font-weight: 700; color: var(--white);
-      /* truncate with ellipsis — matches screenshot */
+      font-size: 0.82rem; font-weight: 700; color: #ffffff;
+      line-height: 1.25;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      /* leave right gap for rate badge */
-      padding-right: 52px;
-      margin-bottom: 2px; line-height: 1.25;
+      /* leave gap so text never slides under rate badge */
+      padding-right: 56px;
+      margin-bottom: 2px;
     }
+
+    /* Candidate name */
     body.mode-original .card-name {
-      font-size: 0.70rem; color: rgba(255,255,255,0.82);
-      margin-bottom: 7px; font-weight: 400;
-      padding-right: 52px;
+      font-size: 0.72rem; font-weight: 400;
+      color: rgba(255,255,255,0.80);
+      padding-right: 56px;
+      margin-bottom: 7px;
     }
+
+    /* Skill tags */
     body.mode-original .card-tags {
       display: flex; gap: 4px; flex-wrap: wrap;
-      /* allow tags to reach full width; rate overlaps last row */
     }
     body.mode-original .card-tag {
-      background: rgba(20,20,50,0.65); color: rgba(255,255,255,0.92);
-      border-radius: 5px; padding: 2px 6px; font-size: 0.60rem;
-      font-weight: 500; border: none;
+      background: rgba(15,20,50,0.72);
+      color: rgba(255,255,255,0.90);
+      border: none; border-radius: 5px;
+      padding: 2px 7px; font-size: 0.61rem; font-weight: 500;
     }
 
-    /* Rate badge — absolute bottom-right of the CARD (not footer)
-       Matches screenshot: dark navy pill, same baseline as last tag row */
+    /* Rate badge — bottom-right of the CARD, navy dark pill */
     body.mode-original .card-rate {
-      position: absolute;
-      bottom: 10px; right: 8px; z-index: 6;
+      position: absolute; bottom: 10px; right: 8px; z-index: 4;
       background: #0d1b3e;
-      color: var(--white); border-radius: 10px;
-      padding: 3px 8px; font-size: 0.68rem; font-weight: 700;
-      border: none; letter-spacing: 0.2px;
+      color: #ffffff; border-radius: 10px;
+      padding: 3px 9px;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.15px;
+      border: none;
     }
-
     /* Original modal */
     body.mode-original .modal-video-panel { display: none; }
     body.mode-original .modal-orig-photo  { display: block; }
@@ -712,6 +744,7 @@
     <input type="text" id="searchInput" placeholder="Search for Candidates" oninput="filterCards()" />
     <button class="search-btn" onclick="filterCards()">
       <svg viewBox="0 0 24 24"><path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+      <span>Search</span>
     </button>
   </div>
 

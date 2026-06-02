@@ -370,7 +370,11 @@
     ══════════════════════════════════════════════ */
     body.mode-redesign .grid {
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px; padding: 24px 32px;
+      gap: 16px;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 32px;
+      box-sizing: border-box;
     }
 
     body.mode-redesign .card {

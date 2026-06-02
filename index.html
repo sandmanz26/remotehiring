@@ -451,25 +451,74 @@
     .rd-pill-option:hover { background: #f3f4f6; }
     .rd-pill-option.rd-pill-selected { background: #f3f4f6; font-weight: 600; color: #111; }
 
-    /* AND keyword search in filter bar */
-    .rd-keyword-wrap {
-      display: flex; align-items: center; gap: 7px;
+    /* ── Skills multi-select filter ── */
+    .rd-skills-dropdown {
+      display: none; position: absolute; top: calc(100% + 6px); left: 0; z-index: 200;
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      min-width: 220px; max-height: 280px;
+      display: none; flex-direction: column; overflow: hidden;
+    }
+    .rd-pill-filter.active .rd-skills-dropdown { display: flex; }
+    .rd-skill-search-wrap {
+      padding: 8px; border-bottom: 1px solid #f0f0f0; flex-shrink: 0;
+    }
+    .rd-skill-search-wrap input {
+      width: 100%; border: 1px solid #e5e7eb; border-radius: 8px;
+      padding: 6px 10px; font-size: 0.78rem; outline: none; box-sizing: border-box;
+    }
+    .rd-skill-search-wrap input:focus { border-color: #111; }
+    .rd-skill-list { overflow-y: auto; flex: 1; padding: 4px; }
+    .rd-skill-option {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border-radius: 7px;
+      font-size: 0.80rem; color: #374151;
+      cursor: pointer; transition: background 0.1s;
+      user-select: none;
+    }
+    .rd-skill-option:hover { background: #f3f4f6; }
+    .rd-skill-option.checked { color: #16a34a; font-weight: 600; }
+    .rd-skill-chk {
+      width: 16px; height: 16px; border-radius: 4px; flex-shrink: 0;
+      border: 1.5px solid #d1d5db; background: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rd-skill-option.checked .rd-skill-chk {
+      background: #16a34a; border-color: #16a34a;
+    }
+    .rd-skill-chk svg { display: none; }
+    .rd-skill-option.checked .rd-skill-chk svg { display: block; }
+
+    /* ── Tag input (keyword AND search) ── */
+    .rd-tag-input-wrap {
+      display: flex; align-items: center; gap: 6px;
       border: 1.5px solid #e5e7eb; background: #fff;
-      border-radius: 20px; padding: 7px 14px;
+      border-radius: 20px; padding: 5px 12px;
       transition: border-color 0.15s;
-      min-width: 220px;
+      min-width: 200px; cursor: text; flex-wrap: wrap;
     }
-    .rd-keyword-wrap:focus-within { border-color: #111; background: #f9fafb; }
-    .rd-keyword-wrap.has-value { border-color: #111; background: #111; }
-    .rd-keyword-wrap.has-value .rd-kw-icon { color: rgba(255,255,255,0.6); }
+    .rd-tag-input-wrap:focus-within { border-color: #111; }
     .rd-kw-icon { width: 13px; height: 13px; color: #9ca3af; flex-shrink: 0; }
-    .rd-keyword-input {
-      border: none; outline: none; background: transparent;
-      font-size: 0.80rem; color: #374151; flex: 1; min-width: 0;
+    .rd-tag-row {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 5px; flex: 1; min-width: 0;
     }
-    .rd-keyword-wrap.has-value .rd-keyword-input { color: #fff; }
-    .rd-keyword-input::placeholder { color: #9ca3af; font-size: 0.78rem; }
-    .rd-keyword-wrap.has-value .rd-keyword-input::placeholder { color: rgba(255,255,255,0.45); }
+    .kw-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: #18181b; color: #fff;
+      border-radius: 12px; padding: 3px 9px 3px 10px;
+      font-size: 0.72rem; font-weight: 600; white-space: nowrap;
+    }
+    .kw-tag-del {
+      background: none; border: none; color: rgba(255,255,255,0.65);
+      cursor: pointer; font-size: 0.72rem; padding: 0; line-height: 1;
+      display: flex; align-items: center;
+    }
+    .kw-tag-del:hover { color: #fff; }
+    #filterKeywordInput {
+      border: none; outline: none; background: transparent;
+      font-size: 0.78rem; color: #374151; min-width: 120px; flex: 1;
+    }
+    #filterKeywordInput::placeholder { color: #9ca3af; }
 
     /* Card title tooltip */
     body.mode-redesign .card-title[data-overflow="true"] {
@@ -1441,12 +1490,28 @@
       </div>
     </div>
 
-    <!-- AND keyword search -->
-    <div class="rd-keyword-wrap" id="rdKeywordWrap">
+    <!-- Skills multi-select -->
+    <div class="rd-pill-filter" id="fpSkills">
+      <button class="rd-pill-btn" onclick="toggleFilter('fpSkills')">
+        <span class="rd-pill-label">Skills</span>
+        <span class="rd-pill-val" id="fpSkillsVal">Any</span>
+        <svg class="rd-pill-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6,9 12,15 18,9"/></svg>
+      </button>
+      <div class="rd-skills-dropdown" id="skillsDropdown">
+        <div class="rd-skill-search-wrap">
+          <input type="text" id="skillSearch" placeholder="Search skills…" oninput="renderSkillList(this.value)" onclick="event.stopPropagation()" />
+        </div>
+        <div class="rd-skill-list" id="skillList"></div>
+      </div>
+    </div>
+
+    <!-- AND keyword tag input -->
+    <div class="rd-tag-input-wrap" id="rdKeywordWrap" onclick="document.getElementById('filterKeywordInput').focus()">
       <svg class="rd-kw-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
-      <input class="rd-keyword-input" id="filterKeyword" type="text"
-             placeholder="keyword AND keyword AND …"
-             oninput="onKeywordInput()" />
+      <div class="rd-tag-row" id="rdTagRow">
+        <input id="filterKeywordInput" type="text" placeholder="Add keyword, press Enter…"
+               onkeydown="onKwKeydown(event)" />
+      </div>
     </div>
 
     <!-- hidden inputs for JS compat -->
@@ -1733,6 +1798,77 @@
   let currentMode = 'original';
   let activeSkills = ["Virtual Assistant","Appointment Setter","Lead Generation","Software Engineering"];
 
+  /* ─── SKILL MULTI-SELECT ─── */
+  const ALL_SKILLS = [...new Set(CANDIDATES.flatMap(c => c.skills))].sort();
+  let selectedSkills = [];
+
+  function renderSkillList(query = '') {
+    const q = query.toLowerCase();
+    const list = document.getElementById('skillList');
+    const filtered = ALL_SKILLS.filter(s => !q || s.toLowerCase().includes(q));
+    list.innerHTML = filtered.map(s => {
+      const checked = selectedSkills.includes(s);
+      return `<div class="rd-skill-option${checked?' checked':''}" onclick="toggleSkill(${JSON.stringify(s)},event)">
+        <span class="rd-skill-chk">
+          <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        ${s}
+      </div>`;
+    }).join('');
+  }
+
+  function toggleSkill(skill, e) {
+    if (e) e.stopPropagation();
+    const idx = selectedSkills.indexOf(skill);
+    if (idx >= 0) selectedSkills.splice(idx, 1);
+    else selectedSkills.push(skill);
+    const pill = document.getElementById('fpSkills');
+    const val  = document.getElementById('fpSkillsVal');
+    if (!selectedSkills.length) {
+      val.textContent = 'Any'; pill.classList.remove('has-value');
+    } else {
+      val.textContent = selectedSkills.length === 1 ? selectedSkills[0] : `${selectedSkills.length} skills`;
+      pill.classList.add('has-value');
+    }
+    renderSkillList(document.getElementById('skillSearch').value || '');
+    applyRdFilters();
+  }
+
+  /* ─── TAG INPUT (keyword AND) ─── */
+  let kwTags = [];
+
+  function onKwKeydown(e) {
+    const input = e.target;
+    if ((e.key === 'Enter' || e.key === 'Tab') && input.value.trim()) {
+      e.preventDefault();
+      const tag = input.value.trim().toLowerCase();
+      if (!kwTags.includes(tag)) { kwTags.push(tag); renderKwTags(); applyRdFilters(); }
+      input.value = '';
+    } else if (e.key === 'Backspace' && !input.value && kwTags.length) {
+      kwTags.pop(); renderKwTags(); applyRdFilters();
+    }
+  }
+
+  function removeKwTag(idx) {
+    kwTags.splice(idx, 1); renderKwTags(); applyRdFilters();
+  }
+
+  function renderKwTags() {
+    const row = document.getElementById('rdTagRow');
+    const input = document.getElementById('filterKeywordInput');
+    row.querySelectorAll('.kw-tag').forEach(t => t.remove());
+    const fragment = document.createDocumentFragment();
+    kwTags.forEach((tag, i) => {
+      const span = document.createElement('span');
+      span.className = 'kw-tag';
+      span.innerHTML = `${tag}<button class="kw-tag-del" onclick="removeKwTag(${i})" tabindex="-1">✕</button>`;
+      fragment.appendChild(span);
+    });
+    row.insertBefore(fragment, input);
+    document.getElementById('rdKeywordWrap').classList.toggle('has-value', kwTags.length > 0);
+    input.placeholder = kwTags.length ? '' : 'Add keyword, press Enter…';
+  }
+
   // Free stock portrait videos (Pexels CDN — no API key needed for direct MP4 links)
   const VIDEOS = [
     "https://videos.pexels.com/video-files/3195394/3195394-uhd_1440_2560_25fps.mp4",
@@ -1802,20 +1938,11 @@
     }
   });
 
-  function onKeywordInput() {
-    const val = document.getElementById('filterKeyword').value;
-    const wrap = document.getElementById('rdKeywordWrap');
-    wrap.classList.toggle('has-value', val.trim() !== '');
-    applyRdFilters();
-  }
-
   function applyRdFilters() {
-    const cat     = document.getElementById('filterCategory').value.toLowerCase();
-    const loc     = document.getElementById('filterLocation').value.toLowerCase();
-    const rate    = document.getElementById('filterRate').value;
-    const exp     = document.getElementById('filterExp').value;
-    const kwRaw   = document.getElementById('filterKeyword').value.trim();
-    const kwTerms = kwRaw ? kwRaw.toLowerCase().split(/\s+and\s+/i).map(t => t.trim()).filter(Boolean) : [];
+    const cat  = document.getElementById('filterCategory').value.toLowerCase();
+    const loc  = document.getElementById('filterLocation').value.toLowerCase();
+    const rate = document.getElementById('filterRate').value;
+    const exp  = document.getElementById('filterExp').value;
 
     const filtered = CANDIDATES.filter(c => {
       if (cat && !c.job.toLowerCase().includes(cat) && !c.skills.some(s => s.toLowerCase().includes(cat))) return false;
@@ -1832,17 +1959,20 @@
         if (exp === '3-4' && !(c.exp >= 3 && c.exp <= 4)) return false;
         if (exp === '5+'  && !(c.exp >= 5)) return false;
       }
-      if (kwTerms.length) {
-        const matchesTerm = t =>
+      // Skills multi-select: candidate must have ALL selected skills
+      if (selectedSkills.length && !selectedSkills.every(s => c.skills.includes(s))) return false;
+      // Keyword tags: candidate must match ALL tags
+      if (kwTags.length) {
+        const matches = t =>
           c.job.toLowerCase().includes(t) || c.name.toLowerCase().includes(t) ||
           c.skills.some(s => s.toLowerCase().includes(t)) || c.bio.toLowerCase().includes(t) ||
           c.country.toLowerCase().includes(t) || (c.langs||[]).some(l => l.toLowerCase().includes(t));
-        if (!kwTerms.every(matchesTerm)) return false;
+        if (!kwTags.every(matches)) return false;
       }
       return true;
     });
 
-    const hasFilter = cat || loc || rate || exp || kwRaw;
+    const hasFilter = cat || loc || rate || exp || selectedSkills.length || kwTags.length;
     document.getElementById('rdClearBtn').style.display = hasFilter ? 'block' : 'none';
     buildGrid(filtered);
     document.getElementById('rdResultCount').textContent =
@@ -1858,8 +1988,15 @@
       p.classList.remove('has-value');
       p.querySelectorAll('.rd-pill-option').forEach((o,i) => o.classList.toggle('rd-pill-selected', i === 0));
     });
-    document.getElementById('filterKeyword').value = '';
-    document.getElementById('rdKeywordWrap').classList.remove('has-value');
+    // Clear skills
+    selectedSkills = [];
+    document.getElementById('fpSkillsVal').textContent = 'Any';
+    document.getElementById('fpSkills').classList.remove('has-value');
+    renderSkillList('');
+    // Clear keyword tags
+    kwTags = [];
+    renderKwTags();
+    document.getElementById('filterKeywordInput').value = '';
     document.getElementById('rdClearBtn').style.display = 'none';
     buildGrid(CANDIDATES);
     document.getElementById('rdResultCount').textContent = '1,000+ candidates found';
@@ -2319,6 +2456,7 @@
   }
 
   buildGrid(CANDIDATES);
+  renderSkillList();
 </script>
   <!-- FLOATING VERSION SWITCHER -->
   <div class="switcher">

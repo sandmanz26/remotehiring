@@ -457,10 +457,13 @@
 
     /* Footer: globe icon + lang chips + exp chip */
     body.mode-redesign .card-footer {
-      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 10px 18px 14px;
       border-top: 1px solid #f3f4f6;
       position: static; background: transparent; margin-top: auto;
+    }
+    body.mode-redesign .card-footer-left {
+      display: flex; align-items: center; gap: 6px;
     }
     body.mode-redesign .card-globe-icon {
       width: 16px; height: 16px; color: #9ca3af; flex-shrink: 0;
@@ -1109,10 +1112,10 @@
           </div>
 
           <div class="card-footer">
-            <svg class="card-globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-            <span class="card-lang-chip">${tz}</span>
-            <span class="card-lang-chip">${c.country.split(' ')[0]}</span>
-            <span class="card-lang-chip">${tzCount}+</span>
+            <div class="card-footer-left">
+              <svg class="card-globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              <span class="card-lang-chip">${tz}</span>
+            </div>
             <span class="card-exp-chip">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
               ${c.exp} yrs

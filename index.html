@@ -69,20 +69,21 @@
 
     /* ── VERSION SWITCHER — matches screenshot 1 ── */
     .switcher {
+      position: fixed; bottom: 28px; right: 28px; z-index: 9999;
       display: flex; align-items: center; gap: 0;
-      background: rgba(255,255,255,0.08);
+      background: #0d1b3e;
       border: 1.5px solid rgba(255,255,255,0.18);
-      border-radius: 30px; padding: 3px; flex-shrink: 0;
-      margin-left: 20px;
+      border-radius: 30px; padding: 4px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.28);
     }
     .sw-label {
       font-size: 0.72rem; font-weight: 600;
-      color: rgba(255,255,255,0.50); padding: 0 10px 0 6px;
+      color: rgba(255,255,255,0.50); padding: 0 10px 0 8px;
       white-space: nowrap;
     }
     .sw-btn {
       border: none; border-radius: 24px; cursor: pointer;
-      padding: 6px 16px; font-size: 0.75rem; font-weight: 700;
+      padding: 7px 18px; font-size: 0.75rem; font-weight: 700;
       transition: background 0.18s, color 0.18s; white-space: nowrap;
       background: transparent; color: rgba(255,255,255,0.55);
       line-height: 1;
@@ -748,13 +749,6 @@
     </button>
   </div>
 
-  <!-- VERSION SWITCHER -->
-  <div class="switcher">
-    <span class="sw-label">View:</span>
-    <button class="sw-btn active" id="sw-orig"   onclick="setMode('original')">Original</button>
-    <button class="sw-btn"        id="sw-redesign" onclick="setMode('redesign')">Redesign ✦</button>
-  </div>
-
   <div class="nav-actions">
     <button class="btn-signin">Sign In</button>
     <button class="btn-join">Join</button>
@@ -1268,5 +1262,12 @@
 
   buildGrid(CANDIDATES);
 </script>
+  <!-- FLOATING VERSION SWITCHER -->
+  <div class="switcher">
+    <span class="sw-label">View:</span>
+    <button class="sw-btn active" id="sw-orig"   onclick="setMode('original')">Original</button>
+    <button class="sw-btn"        id="sw-redesign" onclick="setMode('redesign')">Redesign ✦</button>
+  </div>
+
 </body>
 </html>

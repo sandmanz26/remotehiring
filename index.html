@@ -462,7 +462,7 @@
       position: static; background: transparent; margin-top: auto;
     }
     body.mode-redesign .card-footer-left {
-      display: flex; align-items: center; gap: 6px;
+      display: flex; align-items: center; gap: 4px;
     }
     body.mode-redesign .card-globe-icon {
       width: 16px; height: 16px; color: #9ca3af; flex-shrink: 0;
@@ -1092,14 +1092,8 @@
         // Redesign: content card matching screenshot design
         const skillChips = c.skills.map(s => `<span class="card-tag">${s}</span>`).join("");
         const langs = c.langs || ['English'];
-        let langChips = '';
-        if (langs.length === 1) {
-          langChips = `<span class="card-lang-chip">${langs[0]}</span>`;
-        } else if (langs.length === 2) {
-          langChips = `<span class="card-lang-chip">${langs[0]}</span><span class="card-lang-chip">${langs[1]}</span>`;
-        } else {
-          langChips = `<span class="card-lang-chip">${langs[0]}</span><span class="card-lang-chip">${langs[1]}</span><span class="card-lang-chip">+${langs.length - 2}</span>`;
-        }
+        let langChips = `<span class="card-lang-chip">${langs[0]}</span>`;
+        if (langs.length > 1) langChips += `<span class="card-lang-chip">+${langs.length - 1}</span>`;
         el.innerHTML = `
           <div class="card-body">
             <div class="card-head-row">

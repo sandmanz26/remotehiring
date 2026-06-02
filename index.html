@@ -777,6 +777,7 @@
     }
     .rv-media.rv-landscape { aspect-ratio: 16/9; }
     .rv-media.rv-portrait  { aspect-ratio: 3/4; }
+    .rv-media.rv-tall      { aspect-ratio: 2/3; }
     .rv-media > img {
       width: 100%; height: 100%;
       object-fit: cover; object-position: top center;
@@ -1810,12 +1811,14 @@
       el.onclick = () => openModal(c, aiScore);
 
       if(currentMode === 'revamped'){
-        const isPortrait = c.id % 2 !== 0;
+        // Irregular height sequence — primes avoid repeating at column-count multiples
+        const CARD_ORIENT = ['portrait','landscape','tall','portrait','landscape','portrait','tall','landscape','portrait','tall'];
+        const orient = CARD_ORIENT[(c.id - 1) % CARD_ORIENT.length];
         const vid = VIDEOS[c.id % VIDEOS.length];
         const flagStr = (FLAG[c.country] || '🌍') + ' ' + c.country;
         const skillChips = c.skills.slice(0, 3).map(s => `<span class="rv-tag">${s}</span>`).join('');
         el.innerHTML = `
-          <div class="rv-media ${isPortrait ? 'rv-portrait' : 'rv-landscape'}">
+          <div class="rv-media rv-${orient}">
             <img src="${c.photo}" alt="${c.name}" onerror="this.style.opacity=0" />
             <video src="${vid}" muted playsinline loop preload="none"></video>
             <div class="rv-flag">${flagStr}</div>

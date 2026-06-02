@@ -808,8 +808,10 @@
       object-fit: cover; object-position: top center;
       opacity: 0; transition: opacity 0.28s;
     }
-    body.mode-revamped .card:hover .rv-media > video { opacity: 1; }
-    body.mode-revamped .card:hover .rv-media > img   { opacity: 0; }
+    /* Video triggered by hovering image zone, not whole card */
+    .rv-media:hover > video { opacity: 1; }
+    .rv-media:hover > img   { opacity: 0; }
+    .rv-media { cursor: pointer; }
 
     /* Flag badge overlay */
     .rv-flag {
@@ -828,7 +830,7 @@
       opacity: 0; transition: opacity 0.22s;
       pointer-events: none;
     }
-    body.mode-revamped .card:hover .rv-play-hint { opacity: 1; }
+    .rv-media:hover .rv-play-hint { opacity: 1; }
     .rv-play-circle {
       width: 46px; height: 46px; border-radius: 50%;
       background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.70);
@@ -837,8 +839,16 @@
     }
     .rv-play-circle svg { width: 17px; height: 17px; fill: white; margin-left: 3px; }
 
-    /* Card content */
+    /* Card content — clickable zone for modal */
+    .rv-content, .rv-card-footer {
+      cursor: pointer;
+    }
+    .rv-content:hover { background: rgba(0,0,0,0.018); }
+    .rv-card-footer:hover { background: rgba(0,0,0,0.018); }
+
+    /* Zone separator: subtle top border between image and content */
     .rv-content {
+      border-top: 2px solid #f0f0f0;
       padding: 14px 16px 12px;
       display: flex; flex-direction: column; gap: 9px;
     }
@@ -1921,15 +1931,40 @@
             </span>
           </div>`;
 
-        el.addEventListener('mouseenter', () => {
-          const video = el.querySelector('.rv-media video');
-          video.play().catch(()=>{});
+        const mediaZone   = el.querySelector('.rv-media');
+        const rvVid       = el.querySelector('.rv-media video');
+        const hintSvg     = el.querySelector('.rv-play-circle svg');
+
+        function setHintIcon(playing) {
+          hintSvg.innerHTML = playing
+            ? '<rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/>'
+            : '<polygon points="6,3 20,12 6,21" fill="white"/>';
+        }
+
+        // Hover image zone: autoplay / pause on leave
+        mediaZone.addEventListener('mouseenter', () => {
+          rvVid.play().catch(()=>{});
+          setHintIcon(true);
         });
-        el.addEventListener('mouseleave', () => {
-          const video = el.querySelector('.rv-media video');
-          video.pause(); video.currentTime = 0;
+        mediaZone.addEventListener('mouseleave', () => {
+          rvVid.pause();
+          setHintIcon(false);
         });
-        el.onclick = () => openRdModal(c);
+
+        // Click image zone: toggle pause/resume
+        mediaZone.addEventListener('click', e => {
+          e.stopPropagation();
+          if (rvVid.paused) { rvVid.play().catch(()=>{}); setHintIcon(true); }
+          else              { rvVid.pause(); setHintIcon(false); }
+        });
+
+        // Click content / footer zone: open detail modal
+        el.querySelector('.rv-content').addEventListener('click', e => {
+          e.stopPropagation(); openRdModal(c);
+        });
+        el.querySelector('.rv-card-footer').addEventListener('click', e => {
+          e.stopPropagation(); openRdModal(c);
+        });
 
       } else if(currentMode === 'original'){
         const vid = VIDEOS[c.id % VIDEOS.length];

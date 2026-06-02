@@ -389,7 +389,7 @@
       overflow: hidden;
     }
     body.mode-redesign .card:hover {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.16), 0 2px 8px rgba(0,0,0,0.08);
     }
 
     /* Hide original-only elements */
@@ -471,7 +471,31 @@
       background: #f3f4f6; color: #374151;
       border: 1px solid #e5e7eb; border-radius: 20px;
       padding: 3px 10px; font-size: 0.72rem; font-weight: 500;
+      position: relative;
     }
+
+    /* Tooltip for +N chips */
+    .chip-tooltip {
+      position: relative; display: inline-flex;
+    }
+    .chip-tooltip .tooltip-box {
+      display: none;
+      position: absolute; bottom: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%);
+      background: #1f2937; color: #f9fafb;
+      font-size: 0.72rem; font-weight: 500;
+      border-radius: 8px; padding: 6px 10px;
+      white-space: nowrap; z-index: 999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+      pointer-events: none;
+    }
+    .chip-tooltip .tooltip-box::after {
+      content: ''; position: absolute; top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #1f2937;
+    }
+    .chip-tooltip:hover .tooltip-box { display: block; }
     body.mode-redesign .card-exp-chip {
       background: #f3f4f6; color: #374151;
       border: 1px solid #e5e7eb; border-radius: 20px;
@@ -1233,7 +1257,10 @@
         const skillChips = c.skills.map(s => `<span class="card-tag">${s}</span>`).join("");
         const langs = c.langs || ['English'];
         let langChips = `<span class="card-lang-chip">${langs[0]}</span>`;
-        if (langs.length > 1) langChips += `<span class="card-lang-chip">+${langs.length - 1}</span>`;
+        if (langs.length > 1) {
+          const rest = langs.slice(1).join(', ');
+          langChips += `<span class="chip-tooltip"><span class="card-lang-chip">+${langs.length - 1}</span><span class="tooltip-box">${rest}</span></span>`;
+        }
         el.innerHTML = `
           <div class="card-body">
             <div class="card-head-row">
@@ -1300,7 +1327,10 @@
 
     // lang chips
     let lc = `<span>${langs[0]}</span>`;
-    if (langs.length > 1) lc += `<span>+${langs.length - 1}</span>`;
+    if (langs.length > 1) {
+      const rest = langs.slice(1).join(', ');
+      lc += `<span class="chip-tooltip"><span>+${langs.length - 1}</span><span class="tooltip-box">${rest}</span></span>`;
+    }
     document.getElementById('rdLangs').innerHTML = lc;
     document.getElementById('rdExpVal').textContent = c.exp + ' yrs';
 

@@ -369,8 +369,10 @@
        MODE: REDESIGN (Option A) — Content Card
     ══════════════════════════════════════════════ */
     /* ── Hide original chrome in redesign ── */
-    body.mode-redesign .chips-bar { display: none; }
-    body.mode-redesign .toolbar   { display: none; }
+    body.mode-redesign .chips-bar,
+    body.mode-revamped .chips-bar { display: none; }
+    body.mode-redesign .toolbar,
+    body.mode-revamped .toolbar   { display: none; }
     body.mode-original .rd-filter-bar { display: none; }
 
     /* ── Redesign filter bar ── */
@@ -738,6 +740,124 @@
     }
     body.mode-redesign .btn-view:hover { border-color: var(--accent); color: var(--accent); }
 
+    /* ══════════════════════════════════════════════
+       MODE: REVAMPED — Masonry video grid
+    ══════════════════════════════════════════════ */
+    body.mode-revamped .grid {
+      display: block;
+      column-count: 4;
+      column-gap: 16px;
+      padding: 24px 32px;
+      max-width: 1280px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    body.mode-revamped .card {
+      break-inside: avoid;
+      display: inline-block;
+      width: 100%;
+      margin-bottom: 16px;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e8e8e8;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      cursor: pointer;
+      overflow: hidden;
+      transition: box-shadow 0.20s, transform 0.20s;
+      vertical-align: top;
+    }
+    body.mode-revamped .card:hover {
+      box-shadow: 0 16px 40px rgba(0,0,0,0.14);
+      transform: translateY(-3px);
+    }
+
+    /* Media zone */
+    .rv-media {
+      position: relative; overflow: hidden; background: #d1d5db;
+    }
+    .rv-media.rv-landscape { aspect-ratio: 16/9; }
+    .rv-media.rv-portrait  { aspect-ratio: 3/4; }
+    .rv-media > img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      display: block; transition: opacity 0.28s;
+    }
+    .rv-media > video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: top center;
+      opacity: 0; transition: opacity 0.28s;
+    }
+    body.mode-revamped .card:hover .rv-media > video { opacity: 1; }
+    body.mode-revamped .card:hover .rv-media > img   { opacity: 0; }
+
+    /* Flag badge overlay */
+    .rv-flag {
+      position: absolute; top: 10px; right: 10px; z-index: 5;
+      background: rgba(0,0,0,0.50); backdrop-filter: blur(6px);
+      color: #fff; font-size: 0.67rem; font-weight: 600;
+      border-radius: 20px; padding: 4px 10px;
+      display: flex; align-items: center; gap: 4px;
+      pointer-events: none; letter-spacing: 0.01em;
+    }
+
+    /* Play hint on hover */
+    .rv-play-hint {
+      position: absolute; inset: 0; z-index: 4;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.22s;
+      pointer-events: none;
+    }
+    body.mode-revamped .card:hover .rv-play-hint { opacity: 1; }
+    .rv-play-circle {
+      width: 46px; height: 46px; border-radius: 50%;
+      background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.70);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .rv-play-circle svg { width: 17px; height: 17px; fill: white; margin-left: 3px; }
+
+    /* Card content */
+    .rv-content {
+      padding: 13px 15px 15px;
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .rv-title {
+      font-size: 0.875rem; font-weight: 700; color: #111;
+      line-height: 1.35;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .rv-desc {
+      font-size: 0.75rem; color: #6b7280; line-height: 1.55;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .rv-meta {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      margin-top: 1px;
+    }
+    .rv-person { display: flex; align-items: center; gap: 7px; min-width: 0; }
+    .rv-avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      object-fit: cover; object-position: top; flex-shrink: 0;
+      border: 1.5px solid #e5e7eb; background: #e4e4e7;
+    }
+    .rv-name {
+      font-size: 0.75rem; font-weight: 500; color: #374151;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .rv-rate {
+      font-size: 0.75rem; font-weight: 700; color: #16a34a;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .rv-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .rv-tag {
+      background: #f3f4f6; color: #374151;
+      border: 1px solid #e5e7eb; border-radius: 20px;
+      padding: 3px 10px; font-size: 0.69rem; font-weight: 500;
+    }
+
     /* ── SHARED MODAL FRAME ── */
     .overlay {
       display: none; position: fixed; inset: 0;
@@ -1038,6 +1158,9 @@
       /* Redesign: 3 columns */
       body.mode-redesign .grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 
+      /* Revamped: 3 columns masonry */
+      body.mode-revamped .grid { column-count: 3; }
+
       /* Redesign filter bar: wrap */
       .rd-filter-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
       .rd-filter-controls { flex-wrap: wrap; border-radius: 10px; }
@@ -1054,6 +1177,9 @@
 
       /* Original: 3 columns */
       body.mode-original .grid { grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px 20px; }
+
+      /* Revamped: 2 columns */
+      body.mode-revamped .grid { column-count: 2; padding: 16px 20px; }
 
       /* Redesign: 2 columns */
       body.mode-redesign .grid {
@@ -1116,6 +1242,9 @@
         max-width: 100%;
       }
       body.mode-redesign .card { max-width: 100%; }
+
+      /* Revamped: 1 column on small mobile */
+      body.mode-revamped .grid { column-count: 1; padding: 12px 14px; column-gap: 0; }
 
       /* Redesign filter: mobile collapse */
       .rd-filter-bar { padding: 10px 14px; }
@@ -1577,7 +1706,8 @@
     document.body.className = 'mode-' + mode;
     document.getElementById('sw-orig').classList.toggle('active', mode === 'original');
     document.getElementById('sw-redesign').classList.toggle('active', mode === 'redesign');
-    if(mode !== 'redesign') document.getElementById('annotPanel').classList.remove('open');
+    document.getElementById('sw-revamped').classList.toggle('active', mode === 'revamped');
+    if(mode !== 'redesign' && mode !== 'revamped') document.getElementById('annotPanel').classList.remove('open');
     buildGrid(currentData);
   }
 
@@ -1679,7 +1809,46 @@
       if(currentMode==='original') el.style.background = hashColor(c.id);
       el.onclick = () => openModal(c, aiScore);
 
-      if(currentMode === 'original'){
+      if(currentMode === 'revamped'){
+        const isPortrait = c.id % 2 !== 0;
+        const vid = VIDEOS[c.id % VIDEOS.length];
+        const flagStr = (FLAG[c.country] || '🌍') + ' ' + c.country;
+        const skillChips = c.skills.slice(0, 3).map(s => `<span class="rv-tag">${s}</span>`).join('');
+        el.innerHTML = `
+          <div class="rv-media ${isPortrait ? 'rv-portrait' : 'rv-landscape'}">
+            <img src="${c.photo}" alt="${c.name}" onerror="this.style.opacity=0" />
+            <video src="${vid}" muted playsinline loop preload="none"></video>
+            <div class="rv-flag">${flagStr}</div>
+            <div class="rv-play-hint">
+              <div class="rv-play-circle">
+                <svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="rv-content">
+            <div class="rv-title">${c.job}</div>
+            <div class="rv-desc">${c.bio}</div>
+            <div class="rv-meta">
+              <div class="rv-person">
+                <img class="rv-avatar" src="${c.photo}" alt="${c.name}" onerror="this.style.opacity=0" />
+                <span class="rv-name">${c.name}</span>
+              </div>
+              <span class="rv-rate">${c.rate === '$-' ? 'Negotiable' : c.rate + '/h'}</span>
+            </div>
+            <div class="rv-tags">${skillChips}</div>
+          </div>`;
+
+        el.addEventListener('mouseenter', () => {
+          const video = el.querySelector('.rv-media video');
+          video.play().catch(()=>{});
+        });
+        el.addEventListener('mouseleave', () => {
+          const video = el.querySelector('.rv-media video');
+          video.pause(); video.currentTime = 0;
+        });
+        el.onclick = () => openRdModal(c);
+
+      } else if(currentMode === 'original'){
         const vid = VIDEOS[c.id % VIDEOS.length];
         el.innerHTML = `
           <img  class="card-img" src="${c.photo}" alt="${c.name}" onerror="this.style.display='none'" />
@@ -1896,7 +2065,7 @@
   }
 
   function openModal(c, aiScore){
-    if (currentMode === 'redesign') { openRdModal(c); return; }
+    if (currentMode === 'redesign' || currentMode === 'revamped') { openRdModal(c); return; }
     aiScore = aiScore || (55 + (c.id * 17) % 43);
     const isRedesign = currentMode === 'redesign';
 
@@ -2035,8 +2204,9 @@
   <!-- FLOATING VERSION SWITCHER -->
   <div class="switcher">
     <span class="sw-label">View:</span>
-    <button class="sw-btn active" id="sw-orig"   onclick="setMode('original')">Original</button>
-    <button class="sw-btn"        id="sw-redesign" onclick="setMode('redesign')">Redesign ✦</button>
+    <button class="sw-btn active" id="sw-orig"      onclick="setMode('original')">Original</button>
+    <button class="sw-btn"        id="sw-redesign"  onclick="setMode('redesign')">Redesign ✦</button>
+    <button class="sw-btn"        id="sw-revamped"  onclick="setMode('revamped')">Revamped ✦</button>
   </div>
 
 </body>

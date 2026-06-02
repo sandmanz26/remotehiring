@@ -641,6 +641,105 @@
     .modal-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
 
     /* ── VIDEO POPUP ── */
+    /* ── REDESIGN DETAIL MODAL ── */
+    .rd-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.45); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .rd-overlay.open { display: flex; }
+    .rd-modal {
+      background: #fff; border-radius: 16px;
+      width: min(860px, 100%); max-height: 90vh;
+      display: flex; overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.22);
+      position: relative;
+    }
+    .rd-photo-panel {
+      width: 42%; flex-shrink: 0; position: relative; overflow: hidden;
+      background: #e4e4e7;
+    }
+    .rd-photo {
+      width: 100%; height: 100%; object-fit: cover; object-position: top center;
+      display: block;
+    }
+    .rd-play-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .rd-photo-panel:hover .rd-play-overlay { background: rgba(0,0,0,0.32); }
+    .rd-play-btn {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(255,255,255,0.22); border: 2px solid rgba(255,255,255,0.7);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      opacity: 0; transform: scale(0.85);
+      transition: opacity 0.2s, transform 0.2s, background 0.2s;
+      backdrop-filter: blur(4px);
+    }
+    .rd-photo-panel:hover .rd-play-btn { opacity: 1; transform: scale(1); }
+    .rd-play-btn:hover { background: rgba(255,255,255,0.38); }
+    .rd-play-btn svg { width: 20px; height: 20px; margin-left: 3px; }
+
+    .rd-body {
+      flex: 1; padding: 28px 28px 24px; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 10px;
+      position: relative; min-width: 0;
+    }
+    .rd-close {
+      position: absolute; top: 14px; right: 14px;
+      width: 30px; height: 30px; border-radius: 50%;
+      border: none; background: #f4f4f5; color: #71717a;
+      cursor: pointer; font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .rd-close:hover { background: #e4e4e7; color: #18181b; }
+    .rd-title {
+      font-size: 1.1rem; font-weight: 700; color: #111;
+      line-height: 1.35; padding-right: 32px;
+    }
+    .rd-name-rate {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .rd-name { font-size: 0.9rem; color: #6b7280; }
+    .rd-rate { font-size: 0.9rem; font-weight: 700; color: #16a34a; }
+    .rd-country { font-size: 0.82rem; color: #6b7280; display: flex; align-items: center; gap: 5px; }
+    .rd-bio {
+      font-size: 0.875rem; color: #374151; line-height: 1.65;
+      border-top: 1px solid #f3f4f6; padding-top: 12px;
+    }
+    .rd-skill-row {
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .rd-bolt {
+      width: 16px; height: 16px; color: #374151; flex-shrink: 0; margin-top: 3px;
+    }
+    .rd-skills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .rd-skills span {
+      background: #f3f4f6; color: #374151;
+      border: 1px solid #e5e7eb; border-radius: 20px;
+      padding: 4px 12px; font-size: 0.75rem; font-weight: 500;
+    }
+    .rd-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid #f3f4f6; padding-top: 12px; margin-top: auto;
+    }
+    .rd-footer-left { display: flex; align-items: center; gap: 6px; }
+    .rd-globe { width: 18px; height: 18px; color: #9ca3af; flex-shrink: 0; }
+    .rd-langs { display: flex; gap: 5px; }
+    .rd-langs span, .rd-exp-chip {
+      background: #f3f4f6; color: #374151;
+      border: 1px solid #e5e7eb; border-radius: 20px;
+      padding: 4px 12px; font-size: 0.75rem; font-weight: 500;
+    }
+    .rd-exp-chip {
+      display: flex; align-items: center; gap: 5px;
+    }
+    .rd-exp-chip svg { width: 13px; height: 13px; color: #6b7280; }
+
     .vid-overlay {
       display: none; position: fixed; inset: 0; z-index: 300;
       background: rgba(5,10,30,0.80); backdrop-filter: blur(6px);
@@ -863,6 +962,47 @@
       <div class="modal-actions">
         <button class="btn-msg">Message</button>
         <button class="btn-view">View profile</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REDESIGN DETAIL MODAL -->
+<div class="rd-overlay" id="rdOverlay" onclick="closeRdModal(event)">
+  <div class="rd-modal" id="rdModal">
+    <!-- Left: photo with hover-play -->
+    <div class="rd-photo-panel" id="rdPhotoPanel">
+      <img class="rd-photo" id="rdPhoto" src="" alt="" />
+      <div class="rd-play-overlay" id="rdPlayOverlay">
+        <button class="rd-play-btn" id="rdPlayBtn">
+          <svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21" fill="white"/></svg>
+        </button>
+      </div>
+      <video class="rd-video" id="rdVideo" muted playsinline loop style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;"></video>
+    </div>
+    <!-- Right: detail -->
+    <div class="rd-body">
+      <button class="rd-close" onclick="closeRdModalBtn()">✕</button>
+      <div class="rd-title" id="rdTitle"></div>
+      <div class="rd-name-rate">
+        <span class="rd-name" id="rdName"></span>
+        <span class="rd-rate" id="rdRate"></span>
+      </div>
+      <div class="rd-country" id="rdCountry"></div>
+      <div class="rd-bio" id="rdBio"></div>
+      <div class="rd-skill-row">
+        <svg class="rd-bolt" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 13.5H11L10 22L20.5 10H14L13 2Z"/></svg>
+        <div class="rd-skills" id="rdSkills"></div>
+      </div>
+      <div class="rd-footer">
+        <div class="rd-footer-left">
+          <svg class="rd-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <div class="rd-langs" id="rdLangs"></div>
+        </div>
+        <span class="rd-exp-chip" id="rdExp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          <span id="rdExpVal"></span>
+        </span>
       </div>
     </div>
   </div>
@@ -1130,15 +1270,15 @@
             </button>
           </div>`;
 
-        // Stop card onclick, delegate to buttons
-        el.onclick = null;
+        // Redesign: card click = detail modal
+        el.onclick = () => openRdModal(c);
         el.querySelector('.hover-btn-video').addEventListener('click', e => {
           e.stopPropagation();
           openVideoPopup(c);
         });
         el.querySelector('.hover-btn-detail').addEventListener('click', e => {
           e.stopPropagation();
-          openModal(c, aiScore);
+          openRdModal(c);
         });
       }
       grid.appendChild(el);
@@ -1148,6 +1288,54 @@
   }
 
   /* ─── MODAL ─── */
+  /* ── REDESIGN DETAIL MODAL ── */
+  function openRdModal(c) {
+    const langs = c.langs || ['English'];
+    document.getElementById('rdTitle').textContent = c.job;
+    document.getElementById('rdName').textContent  = c.name;
+    document.getElementById('rdRate').textContent  = c.rate === '$-' ? 'Negotiable' : c.rate + '/h';
+    document.getElementById('rdCountry').innerHTML = getFlag(c.country) + ' ' + c.country;
+    document.getElementById('rdBio').textContent   = c.bio;
+    document.getElementById('rdSkills').innerHTML  = c.skills.map(s => `<span>${s}</span>`).join('');
+
+    // lang chips
+    let lc = `<span>${langs[0]}</span>`;
+    if (langs.length > 1) lc += `<span>+${langs.length - 1}</span>`;
+    document.getElementById('rdLangs').innerHTML = lc;
+    document.getElementById('rdExpVal').textContent = c.exp + ' yrs';
+
+    // photo
+    const photo = document.getElementById('rdPhoto');
+    photo.src = c.photo; photo.alt = c.name;
+    photo.style.display = 'block';
+
+    // video reset
+    const vid = document.getElementById('rdVideo');
+    vid.style.display = 'none'; vid.pause(); vid.src = '';
+    document.getElementById('rdPlayOverlay').style.display = 'flex';
+
+    // play btn wires video
+    const playBtn = document.getElementById('rdPlayBtn');
+    playBtn.onclick = () => {
+      const vidSrc = VIDEOS[c.id % VIDEOS.length];
+      vid.src = vidSrc;
+      vid.style.display = 'block';
+      photo.style.display = 'none';
+      document.getElementById('rdPlayOverlay').style.display = 'none';
+      vid.play().catch(()=>{});
+    };
+
+    document.getElementById('rdOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeRdModal(e) { if (e.target === document.getElementById('rdOverlay')) closeRdModalBtn(); }
+  function closeRdModalBtn() {
+    document.getElementById('rdOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    const vid = document.getElementById('rdVideo');
+    vid.pause(); vid.src = '';
+  }
+
   function openModal(c, aiScore){
     aiScore = aiScore || (55 + (c.id * 17) % 43);
     const isRedesign = currentMode === 'redesign';
@@ -1212,6 +1400,7 @@
   document.addEventListener("keydown", e=>{
     if(e.key==="Escape"){
       if(document.getElementById('vidOverlay').classList.contains('open')) closeVideoPopupBtn();
+      else if(document.getElementById('rdOverlay').classList.contains('open')) closeRdModalBtn();
       else closeModalBtn();
     }
   });

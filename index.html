@@ -771,6 +771,40 @@
     }
     .rd-photo-panel:hover .rd-play-btn { opacity: 1; transform: scale(1); }
     .rd-play-btn:hover { background: rgba(255,255,255,0.34); }
+
+    /* Video controls bar */
+    .rd-vid-controls {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 10;
+      background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+      padding: 20px 12px 10px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .rd-vid-playpause {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(255,255,255,0.18); border: 1.5px solid rgba(255,255,255,0.5);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .rd-vid-playpause:hover { background: rgba(255,255,255,0.32); }
+    .rd-vid-playpause svg { width: 14px; height: 14px; }
+    .rd-vid-progress {
+      flex: 1; cursor: pointer; padding: 8px 0;
+    }
+    .rd-vid-bar-bg {
+      position: relative; height: 4px; background: rgba(255,255,255,0.28);
+      border-radius: 2px;
+    }
+    .rd-vid-bar-fill {
+      height: 100%; background: #fff; border-radius: 2px;
+      width: 0%; pointer-events: none;
+    }
+    .rd-vid-thumb {
+      position: absolute; top: 50%; transform: translate(-50%, -50%);
+      width: 12px; height: 12px; border-radius: 50%;
+      background: #fff; left: 0%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+      pointer-events: none;
+    }
     .rd-play-btn svg { width: 22px; height: 22px; margin-left: 3px; }
 
     /* Profile info — right, scrollable */
@@ -1253,6 +1287,20 @@
           </button>
         </div>
         <video class="rd-video" id="rdVideo" muted playsinline loop style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;"></video>
+
+        <!-- Video controls (shown when playing) -->
+        <div class="rd-vid-controls" id="rdVidControls" style="display:none;">
+          <button class="rd-vid-playpause" id="rdVidPlayPause">
+            <svg id="rdPauseIcon" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            <svg id="rdPlayIcon"  viewBox="0 0 24 24" fill="white" style="display:none;"><polygon points="5,3 19,12 5,21"/></svg>
+          </button>
+          <div class="rd-vid-progress" id="rdVidProgress">
+            <div class="rd-vid-bar-bg">
+              <div class="rd-vid-bar-fill" id="rdVidFill"></div>
+              <div class="rd-vid-thumb"   id="rdVidThumb"></div>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- Profile info -->
       <div class="rd-profile">
@@ -1632,9 +1680,52 @@
     photo.style.display = 'block';
 
     // video reset
-    const vid = document.getElementById('rdVideo');
+    const vid       = document.getElementById('rdVideo');
+    const controls  = document.getElementById('rdVidControls');
+    const fill      = document.getElementById('rdVidFill');
+    const thumb     = document.getElementById('rdVidThumb');
+    const ppBtn     = document.getElementById('rdVidPlayPause');
+    const pauseIcon = document.getElementById('rdPauseIcon');
+    const playIcon  = document.getElementById('rdPlayIcon');
     vid.style.display = 'none'; vid.pause(); vid.src = '';
+    controls.style.display = 'none';
     document.getElementById('rdPlayOverlay').style.display = 'flex';
+
+    // sync progress bar
+    let rafId;
+    function syncProgress() {
+      if (!vid.duration) { rafId = requestAnimationFrame(syncProgress); return; }
+      const pct = (vid.currentTime / vid.duration * 100).toFixed(2);
+      fill.style.width  = pct + '%';
+      thumb.style.left  = pct + '%';
+      rafId = requestAnimationFrame(syncProgress);
+    }
+
+    // play/pause toggle
+    ppBtn.onclick = () => {
+      if (vid.paused) {
+        vid.play().catch(()=>{});
+        pauseIcon.style.display = ''; playIcon.style.display = 'none';
+      } else {
+        vid.pause();
+        pauseIcon.style.display = 'none'; playIcon.style.display = '';
+      }
+    };
+
+    // draggable progress
+    const progressEl = document.getElementById('rdVidProgress');
+    function seekTo(e) {
+      const rect = progressEl.getBoundingClientRect();
+      const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      if (vid.duration) vid.currentTime = pct * vid.duration;
+    }
+    let dragging = false;
+    progressEl.addEventListener('mousedown', e => { dragging = true; seekTo(e); });
+    document.addEventListener('mousemove',   e => { if (dragging) seekTo(e); });
+    document.addEventListener('mouseup',     ()=> { dragging = false; });
+    // touch
+    progressEl.addEventListener('touchstart', e => seekTo(e.touches[0]), { passive: true });
+    progressEl.addEventListener('touchmove',  e => seekTo(e.touches[0]), { passive: true });
 
     // play btn wires video
     const playBtn = document.getElementById('rdPlayBtn');
@@ -1644,7 +1735,11 @@
       vid.style.display = 'block';
       photo.style.display = 'none';
       document.getElementById('rdPlayOverlay').style.display = 'none';
+      controls.style.display = 'flex';
+      pauseIcon.style.display = ''; playIcon.style.display = 'none';
       vid.play().catch(()=>{});
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(syncProgress);
     };
 
     document.getElementById('rdOverlay').classList.add('open');
@@ -1659,6 +1754,9 @@
     document.body.style.overflow = '';
     const vid = document.getElementById('rdVideo');
     vid.pause(); vid.src = '';
+    document.getElementById('rdVidControls').style.display = 'none';
+    document.getElementById('rdPlayOverlay').style.display = 'flex';
+    document.getElementById('rdPhoto').style.display = 'block';
   }
 
   function openModal(c, aiScore){

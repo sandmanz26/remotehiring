@@ -563,6 +563,7 @@
       opacity: 0; transition: opacity 0.18s ease;
       border-radius: 14px;
     }
+    body.mode-redesign .card-hover-actions { pointer-events: none; }
     body.mode-redesign .card:hover .card-hover-actions { opacity: 0; }
 
     body.mode-redesign .hover-btn {
@@ -1595,7 +1596,7 @@
         el.onclick = () => openRdModal(c);
         el.querySelector('.hover-btn-video').addEventListener('click', e => {
           e.stopPropagation();
-          openVideoPopup(c);
+          openRdModal(c, true);
         });
         el.querySelector('.hover-btn-detail').addEventListener('click', e => {
           e.stopPropagation();
@@ -1611,7 +1612,7 @@
 
   /* ─── MODAL ─── */
   /* ── REDESIGN DETAIL MODAL ── */
-  function openRdModal(c) {
+  function openRdModal(c, autoplay = false) {
     const langs = c.langs || ['English'];
     document.getElementById('rdTitle').textContent = c.job;
     document.getElementById('rdName').textContent  = c.name;
@@ -1648,6 +1649,9 @@
 
     document.getElementById('rdOverlay').classList.add('open');
     document.body.style.overflow = 'hidden';
+
+    // autoplay if triggered from Play Video button
+    if (autoplay) playBtn.click();
   }
   function closeRdModal(e) { if (e.target === document.getElementById('rdOverlay')) closeRdModalBtn(); }
   function closeRdModalBtn() {

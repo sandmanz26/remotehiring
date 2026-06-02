@@ -369,114 +369,114 @@
        MODE: REDESIGN (Option A) — Content Card
     ══════════════════════════════════════════════ */
     body.mode-redesign .grid {
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 16px; padding: 24px 32px;
-    }
-
-    /* Card: white content card, not full-photo */
-    /* ─────────────────────────────────────────────
-       REDESIGN CARD — Clean, professional system
-       Palette: white bg, #111 text, #6b7280 secondary,
-       #f4f4f5 chip bg, #18181b chip text, #059669 rate.
-       No decorative colours — restraint is the design.
-    ───────────────────────────────────────────── */
-    body.mode-redesign .grid {
-      grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 16px; padding: 24px 32px;
     }
 
     body.mode-redesign .card {
       background: #ffffff;
-      border-radius: 14px;
-      border: 1px solid #e4e4e7;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      border-radius: 16px;
+      border: 1px solid #e8e8e8;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       cursor: pointer; position: relative;
       aspect-ratio: unset;
-      transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
+      transition: box-shadow 0.18s, transform 0.18s;
       display: flex; flex-direction: column;
       overflow: hidden;
     }
     body.mode-redesign .card:hover {
-      box-shadow: 0 8px 24px rgba(0,0,0,0.10), 0 2px 6px rgba(0,0,0,0.06);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.11);
       transform: translateY(-2px);
-      border-color: #d4d4d8;
     }
 
-    /* Photo strip — 128px, face visible, object-position top */
-    body.mode-redesign .card-img {
-      width: 100%; height: 128px;
-      object-fit: cover; object-position: top center;
-      display: block; flex-shrink: 0; position: static;
-      background: #f4f4f5;
-    }
+    /* Hide original-only elements */
+    body.mode-redesign .card-img    { display: none; }
     body.mode-redesign .card-gradient { display: none; }
+    body.mode-redesign .card-ai     { display: none; }
 
-    /* AI score — top-right, small subtle badge */
-    body.mode-redesign .card-ai {
-      position: absolute; top: 10px; right: 10px;
-      background: rgba(255,255,255,0.92);
-      border: 1px solid #e4e4e7;
-      color: #71717a; border-radius: 20px;
-      padding: 2px 8px; font-size: 0.65rem; font-weight: 600;
-      display: flex; align-items: center; gap: 3px;
-      backdrop-filter: blur(4px);
-    }
-
-    /* Main content area */
+    /* ── Card body ── */
     body.mode-redesign .card-body {
-      padding: 14px 16px 12px;
-      display: flex; flex-direction: column; gap: 4px; flex: 1;
+      padding: 18px 18px 14px;
+      display: flex; flex-direction: column; gap: 12px; flex: 1;
     }
 
-    /* Title — 2 lines, primary, high contrast */
+    /* Head row: circular avatar + info */
+    body.mode-redesign .card-head-row {
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    body.mode-redesign .card-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      object-fit: cover; object-position: top center;
+      flex-shrink: 0;
+      border: 2px solid #f0f0f0;
+      background: #e4e4e7;
+    }
+    body.mode-redesign .card-head-info {
+      display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1;
+    }
+
+    /* Title — bold, 2-line clamp */
     body.mode-redesign .card-title {
-      font-size: 0.875rem; font-weight: 700; color: #18181b;
-      line-height: 1.4;
+      font-size: 0.92rem; font-weight: 700; color: #111111;
+      line-height: 1.35;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-      overflow: hidden; margin: 0 0 2px;
+      overflow: hidden; margin: 0;
     }
 
-    /* Name — secondary, no emphasis */
+    /* Name + rate on same line */
+    body.mode-redesign .card-name-rate {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+    }
     body.mode-redesign .card-name {
-      font-size: 0.775rem; font-weight: 400; color: #71717a;
-      margin: 0;
-    }
-
-    /* Experience — tertiary, a quiet signal */
-    body.mode-redesign .card-exp {
-      font-size: 0.71rem; color: #a1a1aa; font-weight: 400;
-      display: flex; align-items: center; gap: 3px;
-      margin-top: 2px;
-    }
-
-    /* Skill chips — neutral, 2-line max */
-    body.mode-redesign .card-tags {
-      display: flex; gap: 4px; flex-wrap: wrap;
-      max-height: 48px; overflow: hidden;
-      margin-top: 8px;
-    }
-    body.mode-redesign .card-tag {
-      background: #f4f4f5; color: #3f3f46;
-      border: none; border-radius: 6px;
-      padding: 2px 8px; font-size: 0.65rem; font-weight: 500;
-    }
-
-    /* Footer: flag left, rate right — clean divider */
-    body.mode-redesign .card-footer {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 9px 16px 11px;
-      border-top: 1px solid #f4f4f5;
-      margin-top: auto; position: static;
-      background: transparent;
-    }
-    body.mode-redesign .card-flag {
-      font-size: 0.70rem; color: #a1a1aa;
-      display: flex; align-items: center; gap: 4px;
+      font-size: 0.80rem; font-weight: 400; color: #6b7280; margin: 0; white-space: nowrap;
     }
     body.mode-redesign .card-rate {
-      font-size: 0.775rem; font-weight: 700; color: #059669;
-      position: static; background: none; border: none; padding: 0;
+      font-size: 0.82rem; font-weight: 700; color: #16a34a;
+      position: static; background: none; border: none; padding: 0; white-space: nowrap;
     }
+
+    /* Country row */
+    body.mode-redesign .card-country-row {
+      font-size: 0.76rem; color: #6b7280;
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    /* Skill chips */
+    body.mode-redesign .card-tags {
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    body.mode-redesign .card-tag {
+      background: #f3f4f6; color: #374151;
+      border: 1px solid #e5e7eb; border-radius: 20px;
+      padding: 3px 11px; font-size: 0.72rem; font-weight: 500;
+    }
+
+    /* Footer: globe icon + lang chips + exp chip */
+    body.mode-redesign .card-footer {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+      padding: 10px 18px 14px;
+      border-top: 1px solid #f3f4f6;
+      position: static; background: transparent; margin-top: auto;
+    }
+    body.mode-redesign .card-globe-icon {
+      width: 16px; height: 16px; color: #9ca3af; flex-shrink: 0;
+    }
+    body.mode-redesign .card-lang-chip {
+      background: #f3f4f6; color: #374151;
+      border: 1px solid #e5e7eb; border-radius: 20px;
+      padding: 3px 10px; font-size: 0.72rem; font-weight: 500;
+    }
+    body.mode-redesign .card-exp-chip {
+      background: #f3f4f6; color: #374151;
+      border: 1px solid #e5e7eb; border-radius: 20px;
+      padding: 3px 10px; font-size: 0.72rem; font-weight: 500;
+      display: flex; align-items: center; gap: 4px;
+    }
+    body.mode-redesign .card-exp-chip svg {
+      width: 12px; height: 12px; color: #6b7280;
+    }
+    body.mode-redesign .card-flag { display: none; }
+    body.mode-redesign .card-exp  { display: none; }
 
     /* Hover action overlay — dark, two clean buttons */
     body.mode-redesign .card-cta { display: none; }
@@ -1083,22 +1083,36 @@
         });
 
       } else {
-        // Redesign: content card (not full-photo)
+        // Redesign: content card matching screenshot design
         const skillChips = c.skills.map(s => `<span class="card-tag">${s}</span>`).join("");
+        const timezones = ['English','Spanish','French','German','Portuguese'];
+        const tz = timezones[c.id % timezones.length];
+        const tzCount = (c.id % 3) + 2;
         el.innerHTML = `
-          <img class="card-img" src="${c.photo}" alt="${c.name}" onerror="this.style.background='${hashColor(c.id)}'" />
-          <div class="card-ai">⚡ ${aiScore}</div>
-
           <div class="card-body">
-            <div class="card-title">${c.job}</div>
-            <div class="card-name">${c.name}</div>
-            <div class="card-exp">🕐 ${c.exp} yr${c.exp>1?'s':''} experience</div>
+            <div class="card-head-row">
+              <img class="card-avatar" src="${c.photo}" alt="${c.name}" onerror="this.style.background='#e4e4e7'" />
+              <div class="card-head-info">
+                <div class="card-title">${c.job}</div>
+                <div class="card-name-rate">
+                  <span class="card-name">${c.name}</span>
+                  <span class="card-rate">${c.rate === '$-' ? 'Negotiable' : c.rate+'/ Hour'}</span>
+                </div>
+                <div class="card-country-row">${getFlag(c.country)} ${c.country}</div>
+              </div>
+            </div>
             <div class="card-tags">${skillChips}</div>
           </div>
 
           <div class="card-footer">
-            <div class="card-flag">${getFlag(c.country)}</div>
-            <div class="card-rate">${c.rate === '$-' ? 'Negotiable' : c.rate+'/hr'}</div>
+            <svg class="card-globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span class="card-lang-chip">${tz}</span>
+            <span class="card-lang-chip">${c.country.split(' ')[0]}</span>
+            <span class="card-lang-chip">${tzCount}+</span>
+            <span class="card-exp-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+              ${c.exp} yrs
+            </span>
           </div>
 
           <div class="card-hover-actions">

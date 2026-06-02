@@ -806,7 +806,7 @@
     /* Row 2: skills — full width */
     .rd-skill-zone {
       flex-shrink: 0;
-      padding: 14px 24px;
+      padding: 12px 24px;
       border-top: 1px solid #e5e7eb;
       display: flex; align-items: center; gap: 10px;
     }
@@ -824,7 +824,7 @@
     .rd-footer {
       flex-shrink: 0;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 24px 16px;
+      padding: 12px 24px 12px;
       border-top: 1px solid #e5e7eb;
     }
     .rd-footer-left { display: flex; align-items: center; gap: 6px; }
@@ -1621,11 +1621,7 @@
     document.getElementById('rdSkills').innerHTML  = c.skills.map(s => `<span>${s}</span>`).join('');
 
     // lang chips
-    let lc = `<span>${langs[0]}</span>`;
-    if (langs.length > 1) {
-      const rest = langs.slice(1).join(', ');
-      lc += `<span class="chip-tooltip"><span>+${langs.length - 1}</span><span class="tooltip-box">${rest}</span></span>`;
-    }
+    const lc = langs.map(l => `<span>${l}</span>`).join('');
     document.getElementById('rdLangs').innerHTML = lc;
     document.getElementById('rdExpVal').textContent = c.exp + ' yrs';
 

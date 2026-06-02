@@ -368,6 +368,50 @@
     /* ══════════════════════════════════════════════
        MODE: REDESIGN (Option A) — Content Card
     ══════════════════════════════════════════════ */
+    /* ── Hide original chrome in redesign ── */
+    body.mode-redesign .chips-bar { display: none; }
+    body.mode-redesign .toolbar   { display: none; }
+    body.mode-original .rd-filter-bar { display: none; }
+
+    /* ── Redesign filter bar ── */
+    .rd-filter-bar {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 12px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; flex-wrap: wrap;
+    }
+    .rd-result-count { font-size: 0.88rem; font-weight: 600; color: #374151; white-space: nowrap; }
+    .rd-filter-controls {
+      display: flex; align-items: center; gap: 0;
+      background: #f9fafb; border: 1px solid #e5e7eb;
+      border-radius: 10px; overflow: hidden;
+    }
+    .rd-filter-group {
+      display: flex; flex-direction: column; gap: 1px;
+      padding: 7px 16px; min-width: 110px;
+    }
+    .rd-filter-group label {
+      font-size: 0.65rem; font-weight: 700; color: #9ca3af;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .rd-filter-group select {
+      border: none; background: transparent;
+      font-size: 0.82rem; font-weight: 500; color: #111;
+      cursor: pointer; outline: none; padding: 0;
+      appearance: auto;
+    }
+    .rd-filter-sep {
+      width: 1px; background: #e5e7eb; align-self: stretch; flex-shrink: 0;
+    }
+    .rd-clear-btn {
+      border: none; background: transparent;
+      color: #6b7280; font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; padding: 0 14px; white-space: nowrap;
+      transition: color 0.15s;
+    }
+    .rd-clear-btn:hover { color: #111; }
+
     body.mode-redesign .grid {
       grid-template-columns: repeat(auto-fill, minmax(290px, 290px));
       gap: 16px;
@@ -916,7 +960,7 @@
   <button class="see-more" onclick="toggleMore()">See more ▾</button>
 </div>
 
-<!-- TOOLBAR -->
+<!-- TOOLBAR (original mode) -->
 <div class="toolbar">
   <span class="result-count" id="resultCount">1,000+ candidates found</span>
   <div class="toolbar-right">
@@ -924,6 +968,66 @@
     <div class="view-select">40 <span>▾</span></div>
     <span class="view-label">Results per page</span>
     <button class="btn-filters">All Filters ›</button>
+  </div>
+</div>
+
+<!-- REDESIGN FILTER BAR -->
+<div class="rd-filter-bar" id="rdFilterBar">
+  <div class="rd-filter-left">
+    <span class="rd-result-count" id="rdResultCount">1,000+ candidates found</span>
+  </div>
+  <div class="rd-filter-controls">
+    <div class="rd-filter-group">
+      <label>Category</label>
+      <select id="filterCategory" onchange="applyRdFilters()">
+        <option value="">All</option>
+        <option>Sales</option>
+        <option>Virtual Assistant</option>
+        <option>Software Engineering</option>
+        <option>Marketing</option>
+        <option>Design</option>
+        <option>Customer Support</option>
+        <option>Data</option>
+        <option>Operations</option>
+      </select>
+    </div>
+    <div class="rd-filter-sep"></div>
+    <div class="rd-filter-group">
+      <label>Location</label>
+      <select id="filterLocation" onchange="applyRdFilters()">
+        <option value="">Anywhere</option>
+        <option>Philippines</option>
+        <option>India</option>
+        <option>Nigeria</option>
+        <option>Colombia</option>
+        <option>Ghana</option>
+        <option>USA</option>
+        <option>Mexico</option>
+        <option>Indonesia</option>
+      </select>
+    </div>
+    <div class="rd-filter-sep"></div>
+    <div class="rd-filter-group">
+      <label>Rate / hr</label>
+      <select id="filterRate" onchange="applyRdFilters()">
+        <option value="">Any</option>
+        <option value="0-5">Up to $5</option>
+        <option value="5-10">$5 – $10</option>
+        <option value="10-20">$10 – $20</option>
+        <option value="20+">$20+</option>
+      </select>
+    </div>
+    <div class="rd-filter-sep"></div>
+    <div class="rd-filter-group">
+      <label>Experience</label>
+      <select id="filterExp" onchange="applyRdFilters()">
+        <option value="">Any</option>
+        <option value="1-2">1 – 2 yrs</option>
+        <option value="3-4">3 – 4 yrs</option>
+        <option value="5+">5+ yrs</option>
+      </select>
+    </div>
+    <button class="rd-clear-btn" id="rdClearBtn" onclick="clearRdFilters()" style="display:none">✕ Clear</button>
   </div>
 </div>
 
@@ -1218,6 +1322,47 @@
     buildGrid(currentData);
   }
 
+  /* ─── REDESIGN FILTERS ─── */
+  function applyRdFilters() {
+    const cat  = document.getElementById('filterCategory').value.toLowerCase();
+    const loc  = document.getElementById('filterLocation').value.toLowerCase();
+    const rate = document.getElementById('filterRate').value;
+    const exp  = document.getElementById('filterExp').value;
+
+    const filtered = CANDIDATES.filter(c => {
+      if (cat && !c.job.toLowerCase().includes(cat) && !c.skills.some(s => s.toLowerCase().includes(cat))) return false;
+      if (loc && c.country.toLowerCase() !== loc) return false;
+      if (rate) {
+        const r = parseInt(c.rate.replace('$','')) || 0;
+        if (rate === '0-5'  && !(r <= 5))  return false;
+        if (rate === '5-10' && !(r > 5 && r <= 10))  return false;
+        if (rate === '10-20'&& !(r > 10 && r <= 20)) return false;
+        if (rate === '20+'  && !(r > 20)) return false;
+      }
+      if (exp) {
+        if (exp === '1-2' && !(c.exp >= 1 && c.exp <= 2)) return false;
+        if (exp === '3-4' && !(c.exp >= 3 && c.exp <= 4)) return false;
+        if (exp === '5+'  && !(c.exp >= 5)) return false;
+      }
+      return true;
+    });
+
+    const hasFilter = cat || loc || rate || exp;
+    document.getElementById('rdClearBtn').style.display = hasFilter ? 'block' : 'none';
+    buildGrid(filtered);
+    document.getElementById('rdResultCount').textContent =
+      filtered.length >= 40 ? '1,000+ candidates found' : `${filtered.length} candidate${filtered.length !== 1 ? 's' : ''} found`;
+  }
+
+  function clearRdFilters() {
+    ['filterCategory','filterLocation','filterRate','filterExp'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('rdClearBtn').style.display = 'none';
+    buildGrid(CANDIDATES);
+    document.getElementById('rdResultCount').textContent = '1,000+ candidates found';
+  }
+
   /* ─── GRID ─── */
   let currentData = CANDIDATES;
 
@@ -1339,8 +1484,9 @@
       }
       grid.appendChild(el);
     });
-    document.getElementById("resultCount").textContent =
-      data.length >= 40 ? "1,000+ candidates found" : `${data.length} candidate${data.length!==1?"s":""} found`;
+    const countStr = data.length >= 40 ? "1,000+ candidates found" : `${data.length} candidate${data.length!==1?"s":""} found`;
+    document.getElementById("resultCount").textContent = countStr;
+    document.getElementById("rdResultCount").textContent = countStr;
   }
 
   /* ─── MODAL ─── */

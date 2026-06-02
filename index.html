@@ -919,14 +919,119 @@
     .annot-why { font-size: 0.75rem; color: var(--muted); line-height: 1.55; }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 680px) {
-      .sw-label { display: none; }
-      .nav-actions { display: none; }
-      .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; }
+    /* ── RESPONSIVE ── */
+
+    /* Tablet: 1024px */
+    @media (max-width: 1024px) {
+      /* Navbar: shrink search */
+      .search-bar { width: 380px; }
+
+      /* Original: 4 columns */
+      body.mode-original .grid { grid-template-columns: repeat(4, 1fr); }
+
+      /* Redesign: 3 columns */
+      body.mode-redesign .grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+
+      /* Redesign filter bar: wrap */
+      .rd-filter-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .rd-filter-controls { flex-wrap: wrap; border-radius: 10px; }
+
+      /* Detail modal */
+      .rd-modal { width: min(720px, 96%); }
+    }
+
+    /* Small tablet: 768px */
+    @media (max-width: 768px) {
+      /* Navbar: hide Sign In, shrink search */
+      .nav-actions .btn-signin { display: none; }
+      .search-bar { width: 300px; }
+
+      /* Original: 3 columns */
+      body.mode-original .grid { grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px 20px; }
+
+      /* Redesign: 2 columns */
+      body.mode-redesign .grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        padding: 16px 20px;
+      }
+
+      /* Toolbar */
+      .toolbar { padding: 10px 20px; }
+      .rd-filter-bar { padding: 10px 20px; }
+      .chips-bar { padding: 0 20px 12px; }
+
+      /* Old modal (original) */
       .modal { flex-direction: column; max-height: 95vh; }
-      body.mode-redesign .modal-video-panel { width: 100%; min-height: 200px; }
-      body.mode-original .modal-orig-photo { width: 100%; min-height: 220px; }
+      body.mode-original .modal-orig-photo { width: 100%; min-height: 200px; max-height: 220px; }
+
+      /* Redesign detail modal: stack vertically */
+      .rd-modal { flex-direction: column; width: min(500px, 96%); height: auto; max-height: 92vh; }
+      .rd-photo-panel { width: 100%; height: 220px; border-radius: 16px 16px 0 0; flex-shrink: 0; }
+      .rd-photo { object-position: center 20%; }
+      .rd-top { padding: 20px 20px 14px; }
+      .rd-skill-zone { padding: 12px 20px; }
+      .rd-footer { padding: 10px 20px 14px; }
+
+      /* Video popup */
+      .vid-modal { width: 92vw; min-height: unset; }
+
       .annot-panel { right: 12px; width: calc(100vw - 24px); }
+    }
+
+    /* Mobile: 480px */
+    @media (max-width: 480px) {
+      /* Navbar: compact */
+      nav { padding: 0 14px; height: 56px; }
+      .search-bar {
+        position: static; transform: none;
+        flex: 1; width: auto; min-width: 0;
+        margin: 0 10px;
+        height: 40px;
+      }
+      .search-bar input { font-size: 0.85rem; }
+      .search-btn span { display: none; }
+      .search-btn { padding: 0 12px; }
+      .nav-actions { display: none; }
+      .logo { font-size: 1.2rem; }
+
+      /* Chips bar */
+      .chips-bar { padding: 0 14px 10px; gap: 6px; }
+
+      /* Original: 2 columns */
+      body.mode-original .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 10px 14px; }
+      body.mode-original .card-title { font-size: 0.72rem; }
+      body.mode-original .card-name  { font-size: 0.64rem; }
+
+      /* Redesign: 1 column */
+      body.mode-redesign .grid {
+        grid-template-columns: 1fr;
+        padding: 12px 14px;
+        max-width: 100%;
+      }
+      body.mode-redesign .card { max-width: 100%; }
+
+      /* Redesign filter: stack selects */
+      .rd-filter-bar { padding: 10px 14px; }
+      .rd-filter-controls { width: 100%; flex-direction: column; border-radius: 10px; }
+      .rd-filter-sep { width: 100%; height: 1px; }
+      .rd-filter-group { padding: 8px 14px; }
+
+      /* Toolbar */
+      .toolbar { padding: 8px 14px; flex-wrap: wrap; gap: 6px; }
+      .toolbar-right { gap: 8px; }
+      .view-label { display: none; }
+
+      /* Redesign modal: full-screen feel */
+      .rd-modal { width: 96vw; border-radius: 12px; max-height: 90vh; }
+      .rd-photo-panel { height: 180px; }
+      .rd-title { font-size: 0.95rem; }
+
+      /* Old modal */
+      .modal { width: 96vw; border-radius: 12px; }
+      body.mode-original .modal-orig-photo { min-height: 160px; }
+
+      /* Floating switcher */
+      .switcher { bottom: 16px; right: 16px; }
     }
   </style>
 </head>

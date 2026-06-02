@@ -901,12 +901,28 @@
       padding: 14px 16px 12px;
       display: flex; flex-direction: column; gap: 9px;
     }
+    .rv-title-wrap { position: relative; }
     .rv-title {
       font-size: 1rem; font-weight: 700; color: #111;
       line-height: 1.3;
       display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
       overflow: hidden;
     }
+    .rv-title-tooltip {
+      display: none;
+      position: absolute; bottom: calc(100% + 7px); left: 0;
+      background: #1f2937; color: #f9fafb;
+      font-size: 0.75rem; font-weight: 500; line-height: 1.55;
+      border-radius: 8px; padding: 9px 13px;
+      z-index: 999; max-width: 280px; white-space: normal;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+      pointer-events: none;
+    }
+    .rv-title-tooltip::after {
+      content: ''; position: absolute; top: 100%; left: 14px;
+      border: 5px solid transparent; border-top-color: #1f2937;
+    }
+    .rv-title-wrap:hover .rv-title-tooltip { display: block; }
     .rv-name-rate {
       display: flex; align-items: center; justify-content: space-between; gap: 6px;
     }
@@ -1753,7 +1769,7 @@
   function portrait(g,n){ return `https://randomuser.me/api/portraits/${g}/${n}.jpg`; }
 
   const CANDIDATES = [
-    {id:1,  exp:4, job:"Cold Calling and Sales Specialist",         name:"Sawyer Davis",         country:"USA",          rate:"$-",  annual:"--",   skills:["Sales","Salesforce","Cold Calling","B2B"],                       bio:"Experienced cold caller with a proven track record in B2B sales and CRM management.",                    photo:portrait("men",  1), langs:["English"]},
+    {id:1,  exp:4, job:"Experienced Cold Calling and B2B Sales Specialist with a Proven Track Record in SaaS Outreach. Expert in Pipeline Management, CRM Systems, and High-Volume Outbound Prospecting. Results-Driven Professional Delivering Consistent Revenue Growth for Remote Teams.",         name:"Sawyer Davis",         country:"USA",          rate:"$-",  annual:"--",   skills:["Sales","Salesforce","Cold Calling","B2B"],                       bio:"Experienced cold caller with a proven track record in B2B sales and CRM management.",                    photo:portrait("men",  1), langs:["English"]},
     {id:2,  exp:3, job:"Sales Development Representative",          name:"Noluthando Zuma",      country:"South Africa", rate:"$14", annual:"--",   skills:["Sales","Appointment Setter","Salesforce","Outbound"],            bio:"Appointment setter and Sales development Representative with 3 years of experience.",                   photo:portrait("women",2), langs:["English","Zulu"]},
     {id:3,  exp:2, job:"Precision Appointment Setting Specialist",  name:"Kylah Ignacio",        country:"Philippines",  rate:"$7",  annual:"--",   skills:["Appointment Setter","Client Relations","CRM","Scheduling"],      bio:"Dedicated appointment setter with excellent communication skills and a client-first approach.",         photo:portrait("women",3), langs:["English","Filipino","Spanish"]},
     {id:4,  exp:6, job:"Expert Sales and Client Relations Manager", name:"Adela Ledezma-Rivera", country:"USA",          rate:"$-",  annual:"--",   skills:["Sales","Customer Satisfaction","Bilingual","CRM"],               bio:"Bilingual sales professional skilled in building lasting client relationships.",                        photo:portrait("women",4), langs:["English","Spanish"]},
@@ -2049,7 +2065,10 @@
             </div>
           </div>
           <div class="rv-content">
-            <div class="rv-title">${c.job}</div>
+            <div class="rv-title-wrap">
+              <div class="rv-title">${c.job}</div>
+              <div class="rv-title-tooltip">${c.job}</div>
+            </div>
             <div class="rv-name-rate">
               <span class="rv-name">${c.name}</span>
               <span class="rv-rate">${c.rate === '$-' ? 'Negotiable' : c.rate + '/h'}</span>

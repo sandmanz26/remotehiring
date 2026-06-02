@@ -405,7 +405,7 @@
 
     /* Head row: circular avatar + info */
     body.mode-redesign .card-head-row {
-      display: flex; align-items: flex-start; gap: 14px;
+      display: flex; align-items: flex-start; gap: 12px;
     }
     body.mode-redesign .card-avatar {
       width: 64px; height: 64px; border-radius: 50%;
@@ -1108,7 +1108,7 @@
                 <div class="card-title">${c.job}</div>
                 <div class="card-name-rate">
                   <span class="card-name">${c.name}</span>
-                  <span class="card-rate">${c.rate === '$-' ? 'Negotiable' : c.rate+'/ Hour'}</span>
+                  <span class="card-rate">${c.rate === '$-' ? 'Negotiable' : c.rate+'/h'}</span>
                 </div>
                 <div class="card-country-row">${getFlag(c.country)} ${c.country}</div>
               </div>

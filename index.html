@@ -716,19 +716,37 @@
       align-items: center; justify-content: center; padding: 24px;
     }
     .rd-overlay.open { display: flex; }
+
+    /* Modal: column layout — top-row / skill-zone / footer */
     .rd-modal {
       background: #fff; border-radius: 16px;
-      width: min(820px, 100%); height: min(520px, 90vh);
-      display: flex; overflow: hidden;
+      width: min(820px, 100%); max-height: 90vh;
+      display: flex; flex-direction: column; overflow: hidden;
       box-shadow: 0 24px 60px rgba(0,0,0,0.22);
       position: relative;
     }
 
-    /* ── Left photo panel ── */
+    /* Close button — top-right of entire modal */
+    .rd-close {
+      position: absolute; top: 14px; right: 14px; z-index: 20;
+      width: 30px; height: 30px; border-radius: 50%;
+      border: none; background: rgba(244,244,245,0.92); color: #71717a;
+      cursor: pointer; font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+      backdrop-filter: blur(4px);
+    }
+    .rd-close:hover { background: #e4e4e7; color: #18181b; }
+
+    /* Row 1: photo + profile */
+    .rd-top-row {
+      display: flex; flex: 1; overflow: hidden; min-height: 0;
+    }
+
+    /* Photo panel — left, fixed width */
     .rd-photo-panel {
-      width: 40%; flex-shrink: 0; position: relative; overflow: hidden;
+      width: 42%; flex-shrink: 0; position: relative; overflow: hidden;
       background: #d1d5db;
-      border-radius: 16px 0 0 16px;
     }
     .rd-photo {
       width: 100%; height: 100%; object-fit: cover; object-position: top center;
@@ -754,29 +772,14 @@
     .rd-play-btn:hover { background: rgba(255,255,255,0.34); }
     .rd-play-btn svg { width: 22px; height: 22px; margin-left: 3px; }
 
-    /* ── Right body: 3 zones stacked ── */
-    .rd-body {
-      flex: 1; display: flex; flex-direction: column;
-      overflow: hidden; min-width: 0; position: relative;
-    }
-    .rd-close {
-      position: absolute; top: 16px; right: 16px; z-index: 10;
-      width: 30px; height: 30px; border-radius: 50%;
-      border: none; background: #f4f4f5; color: #71717a;
-      cursor: pointer; font-size: 0.85rem;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s;
-    }
-    .rd-close:hover { background: #e4e4e7; color: #18181b; }
-
-    /* Zone 1: identity + bio — scrollable, fills available space */
-    .rd-top {
+    /* Profile info — right, scrollable */
+    .rd-profile {
       flex: 1; overflow-y: auto;
-      padding: 28px 28px 20px;
+      padding: 28px 28px 24px; min-width: 0;
       display: flex; flex-direction: column; gap: 6px;
     }
     .rd-title {
-      font-size: 1.08rem; font-weight: 700; color: #111;
+      font-size: 1.1rem; font-weight: 700; color: #111;
       line-height: 1.35; padding-right: 36px;
     }
     .rd-name-rate {
@@ -794,10 +797,10 @@
       margin-top: 14px;
     }
 
-    /* Zone 2: skills — fixed, separated by border top */
+    /* Row 2: skills — full width */
     .rd-skill-zone {
       flex-shrink: 0;
-      padding: 14px 28px;
+      padding: 14px 24px;
       border-top: 1px solid #e5e7eb;
       display: flex; align-items: center; gap: 10px;
     }
@@ -811,11 +814,11 @@
       padding: 5px 13px; font-size: 0.78rem; font-weight: 500;
     }
 
-    /* Zone 3: footer — fixed, separated by border top */
+    /* Row 3: language / exp — full width */
     .rd-footer {
       flex-shrink: 0;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 28px 16px;
+      padding: 12px 24px 16px;
       border-top: 1px solid #e5e7eb;
     }
     .rd-footer-left { display: flex; align-items: center; gap: 6px; }
@@ -964,11 +967,12 @@
       .modal { flex-direction: column; max-height: 95vh; }
       body.mode-original .modal-orig-photo { width: 100%; min-height: 200px; max-height: 220px; }
 
-      /* Redesign detail modal: stack vertically */
-      .rd-modal { flex-direction: column; width: min(500px, 96%); height: auto; max-height: 92vh; }
-      .rd-photo-panel { width: 100%; height: 220px; border-radius: 16px 16px 0 0; flex-shrink: 0; }
+      /* Redesign detail modal: stack top-row vertically */
+      .rd-modal { width: min(500px, 96%); }
+      .rd-top-row { flex-direction: column; }
+      .rd-photo-panel { width: 100%; height: 220px; flex-shrink: 0; }
       .rd-photo { object-position: center 20%; }
-      .rd-top { padding: 20px 20px 14px; }
+      .rd-profile { padding: 20px 20px 14px; }
       .rd-skill-zone { padding: 12px 20px; }
       .rd-footer { padding: 10px 20px 14px; }
 
@@ -1022,7 +1026,7 @@
       .view-label { display: none; }
 
       /* Redesign modal: full-screen feel */
-      .rd-modal { width: 96vw; border-radius: 12px; max-height: 90vh; }
+      .rd-modal { width: 96vw; border-radius: 12px; }
       .rd-photo-panel { height: 180px; }
       .rd-title { font-size: 0.95rem; }
 
@@ -1224,22 +1228,22 @@
 <!-- REDESIGN DETAIL MODAL -->
 <div class="rd-overlay" id="rdOverlay" onclick="closeRdModal(event)">
   <div class="rd-modal" id="rdModal">
-    <!-- Left: photo with hover-play -->
-    <div class="rd-photo-panel" id="rdPhotoPanel">
-      <img class="rd-photo" id="rdPhoto" src="" alt="" />
-      <div class="rd-play-overlay" id="rdPlayOverlay">
-        <button class="rd-play-btn" id="rdPlayBtn">
-          <svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21" fill="white"/></svg>
-        </button>
-      </div>
-      <video class="rd-video" id="rdVideo" muted playsinline loop style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;"></video>
-    </div>
-    <!-- Right: detail (3 zones) -->
-    <div class="rd-body">
-      <button class="rd-close" onclick="closeRdModalBtn()">✕</button>
+    <button class="rd-close" onclick="closeRdModalBtn()">✕</button>
 
-      <!-- Zone 1: identity + bio -->
-      <div class="rd-top">
+    <!-- Row 1: photo + profile side by side -->
+    <div class="rd-top-row">
+      <!-- Photo with hover-play -->
+      <div class="rd-photo-panel" id="rdPhotoPanel">
+        <img class="rd-photo" id="rdPhoto" src="" alt="" />
+        <div class="rd-play-overlay" id="rdPlayOverlay">
+          <button class="rd-play-btn" id="rdPlayBtn">
+            <svg viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21" fill="white"/></svg>
+          </button>
+        </div>
+        <video class="rd-video" id="rdVideo" muted playsinline loop style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;"></video>
+      </div>
+      <!-- Profile info -->
+      <div class="rd-profile">
         <div class="rd-title" id="rdTitle"></div>
         <div class="rd-name-rate">
           <span class="rd-name" id="rdName"></span>
@@ -1248,24 +1252,24 @@
         <div class="rd-country" id="rdCountry"></div>
         <div class="rd-bio" id="rdBio"></div>
       </div>
+    </div>
 
-      <!-- Zone 2: skills -->
-      <div class="rd-skill-zone">
-        <svg class="rd-bolt" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 13.5H11L10 22L20.5 10H14L13 2Z"/></svg>
-        <div class="rd-skills" id="rdSkills"></div>
-      </div>
+    <!-- Row 2: skills full width -->
+    <div class="rd-skill-zone">
+      <svg class="rd-bolt" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 13.5H11L10 22L20.5 10H14L13 2Z"/></svg>
+      <div class="rd-skills" id="rdSkills"></div>
+    </div>
 
-      <!-- Zone 3: footer -->
-      <div class="rd-footer">
-        <div class="rd-footer-left">
-          <svg class="rd-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          <div class="rd-langs" id="rdLangs"></div>
-        </div>
-        <span class="rd-exp-chip" id="rdExp">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-          <span id="rdExpVal"></span>
-        </span>
+    <!-- Row 3: language + exp full width -->
+    <div class="rd-footer">
+      <div class="rd-footer-left">
+        <svg class="rd-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <div class="rd-langs" id="rdLangs"></div>
       </div>
+      <span class="rd-exp-chip" id="rdExp">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        <span id="rdExpVal"></span>
+      </span>
     </div>
   </div>
 </div>
